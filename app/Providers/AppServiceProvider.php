@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\RoutingService;
 use App\Services\SmsService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -16,6 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(RoutingService::class, fn () => new RoutingService(
+            apiKey: config('services.openrouteservice.key'),
+        ));
+
         $this->app->singleton(SmsService::class, fn () => new SmsService(
             apiKey: config('services.semaphore.key'),
             senderName: config('services.semaphore.sender_name'),

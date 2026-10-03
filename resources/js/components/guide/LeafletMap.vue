@@ -54,6 +54,7 @@ let markerLayer: Leaflet.LayerGroup | null = null;
 let routeLayer: Leaflet.Polyline | null = null;
 let pinMarker: Leaflet.Marker | null = null;
 let userMarker: Leaflet.CircleMarker | null = null;
+let resizeObserver: ResizeObserver | null = null;
 
 function escapeHtml(text: string) {
     return text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
@@ -118,14 +119,22 @@ function drawMarkers() {
         ).addTo(map.value);
     }
 
-    if (props.fitMarkers && props.markers.length > 1) {
+    fitView();
+}
+
+function fitView() {
+    if (!map.value || !props.fitMarkers) {
+        return;
+    }
+
+    if (props.markers.length > 1) {
         map.value.fitBounds(
             L.latLngBounds(
                 props.markers.map((marker) => [marker.lat, marker.lng]),
             ),
             { padding: [32, 32], maxZoom: 15 },
         );
-    } else if (props.fitMarkers && props.markers.length === 1) {
+    } else if (props.markers.length === 1) {
         map.value.setView([props.markers[0].lat, props.markers[0].lng], 15);
     }
 }
@@ -222,6 +231,29 @@ onMounted(async () => {
     drawMarkers();
     drawPin();
     drawUserLocation();
+
+    // The container can change size after mount (grid layout, tabs, dialogs). Leaflet needs to be told,
+    // and the view refitted, or it measures a stale size and the markers fall outside the map.
+    let lastSize = '';
+    resizeObserver = new ResizeObserver(([entry]) => {
+        const size = `${Math.round(entry.contentRect.width)}x${Math.round(entry.contentRect.height)}`;
+
+        if (size === lastSize || !map.value) {
+            return;
+        }
+
+        const firstMeasure =
+            lastSize === '' ||
+            lastSize.startsWith('0x') ||
+            lastSize.endsWith('x0');
+        lastSize = size;
+        map.value.invalidateSize();
+
+        if (firstMeasure) {
+            fitView();
+        }
+    });
+    resizeObserver.observe(container.value);
 });
 
 watch(() => props.markers, drawMarkers, { deep: true });
@@ -241,6 +273,7 @@ watch(
 );
 
 onBeforeUnmount(() => {
+    resizeObserver?.disconnect();
     map.value?.remove();
 });
 

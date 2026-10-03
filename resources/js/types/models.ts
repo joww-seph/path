@@ -211,3 +211,84 @@ export type ResourcePage<T> = {
         links: { url: string | null; label: string; active: boolean }[];
     };
 };
+
+export type TripRole = 'owner' | 'editor' | 'viewer';
+
+export type Trip = {
+    id: number;
+    title: string;
+    start_date: string;
+    end_date: string;
+    day_count: number;
+    pax: number;
+    budget: string | null;
+    day_starts_at: string;
+    travel_mode: 'car' | 'tricycle' | 'walk';
+    notes: string | null;
+    role: TripRole | null;
+    owner?: { id: number; name: string };
+    items_count?: number;
+    is_shared: boolean;
+    share_url?: string;
+};
+
+export type ItineraryItem = {
+    id: number;
+    title: string;
+    listing: {
+        id: number;
+        name: string;
+        slug: string;
+        category: { name: string; icon: string; color: string } | null;
+        photo: string | null;
+        entrance_fee: string | null;
+        price_min: string | null;
+        is_bookable: boolean;
+        contact_phone: string | null;
+        address: string | null;
+    } | null;
+    latitude: number | null;
+    longitude: number | null;
+    day_number: number;
+    position: number;
+    duration_minutes: number | null;
+    visit_minutes: number;
+    fixed_start_time: string | null;
+    start_time: string | null;
+    end_time: string | null;
+    travel_minutes_from_previous: number | null;
+    distance_km_from_previous: number | null;
+    notes: string | null;
+    is_done: boolean;
+    updated_at: string;
+};
+
+export type ItineraryDay = {
+    number: number;
+    date: string;
+    in_trip: boolean;
+    items: ItineraryItem[];
+};
+
+export type PlannerWarning = {
+    day: number;
+    item_id: number | null;
+    type: string;
+    message: string;
+};
+
+export type ItineraryTemplate = {
+    id: number;
+    name: string;
+    slug: string;
+    summary: string | null;
+    days: number;
+    items_count: number;
+};
+
+export type TripMember = {
+    id: number;
+    name: string;
+    email: string;
+    role: TripRole;
+};

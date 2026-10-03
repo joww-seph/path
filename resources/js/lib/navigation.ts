@@ -6,6 +6,7 @@ import {
     Compass,
     HeartPulse,
     LayoutGrid,
+    Map as MapIcon,
     MapPinned,
     SlidersHorizontal,
     Store,
@@ -37,6 +38,11 @@ export function navigationFor(role: Role): NavGroup[] {
                             title: 'Dashboard',
                             href: tourist.dashboard(),
                             icon: LayoutGrid,
+                        },
+                        {
+                            title: 'My trips',
+                            href: tourist.trips.index(),
+                            icon: MapIcon,
                         },
                         {
                             title: 'Explore Paoay',

@@ -15,6 +15,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import CategoryIcon from '@/components/guide/CategoryIcon.vue';
+import AddToTripCard from '@/components/trips/AddToTripCard.vue';
 import LeafletMap from '@/components/guide/LeafletMap.vue';
 import ListingCard from '@/components/guide/ListingCard.vue';
 import OpeningHoursTable from '@/components/guide/OpeningHoursTable.vue';
@@ -35,6 +36,9 @@ const props = defineProps<{
     }[];
     nearby: ListingCardType[];
     paymentInstructions: string | null;
+    myTrips:
+        | { id: number; title: string; start_date: string; day_count: number }[]
+        | null;
 }>();
 
 const { t } = useTrans();
@@ -308,6 +312,11 @@ const paragraphs = (text: string | null) =>
             </div>
 
             <aside class="space-y-6">
+                <AddToTripCard
+                    v-if="listing.status === 'published'"
+                    :listing-id="listing.id"
+                    :trips="myTrips"
+                />
                 <div class="rounded-xl border p-4">
                     <h2 class="mb-2 font-semibold">{{ t('Prices') }}</h2>
                     <p

@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             PaoayGuideSeeder::class,
+            ItineraryTemplateSeeder::class,
         ]);
 
         if (! app()->isProduction()) {

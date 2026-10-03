@@ -7,6 +7,7 @@ use App\Http\Controllers\Guide\EventController;
 use App\Http\Controllers\Guide\ExploreController;
 use App\Http\Controllers\Guide\ListingController;
 use App\Http\Controllers\Guide\MapController;
+use App\Http\Controllers\Guide\SharedTripController;
 use App\Http\Controllers\Guide\SitemapController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Listings\ListingPhotoController;
@@ -23,6 +24,7 @@ Route::get('map', MapController::class)->name('map');
 Route::get('events', [EventController::class, 'index'])->name('events.index');
 Route::get('events/{event}', [EventController::class, 'show'])->name('events.show');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('trips/shared/{token}', SharedTripController::class)->name('trips.shared');
 
 Route::middleware('guest')->group(function () {
     Route::get('partner/register', [PartnerRegistrationController::class, 'create'])->name('partner.register');

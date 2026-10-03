@@ -13,8 +13,12 @@ import {
 import { useTrans } from '@/composables/useTrans';
 import { edit as editProfile } from '@/routes/profile';
 import tourist from '@/routes/tourist';
+import type { Trip } from '@/types';
+import { formatDate } from '@/lib/format';
+import { Button } from '@/components/ui/button';
 
 const props = defineProps<{
+    nextTrip: Trip | null;
     checklist: {
         preferences: boolean;
         emergencyContacts: boolean;
@@ -69,6 +73,41 @@ const steps = computed(() => [
             "
             :description="t('Here is what to do before your trip to Paoay.')"
         />
+
+        <Card>
+            <CardHeader>
+                <CardTitle>{{
+                    nextTrip ? nextTrip.title : t('Plan your trip to Paoay')
+                }}</CardTitle>
+                <CardDescription v-if="nextTrip">
+                    {{ formatDate(nextTrip.start_date) }} –
+                    {{ formatDate(nextTrip.end_date) }} ·
+                    {{
+                        t(':count stops', { count: nextTrip.items_count ?? 0 })
+                    }}
+                </CardDescription>
+                <CardDescription v-else>
+                    {{
+                        t(
+                            'Start from a ready-made plan such as "Paoay in One Day", or build your own.',
+                        )
+                    }}
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button as-child>
+                    <Link
+                        :href="
+                            nextTrip
+                                ? tourist.trips.show(nextTrip.id)
+                                : tourist.trips.index()
+                        "
+                    >
+                        {{ nextTrip ? t('Open itinerary') : t('Start a trip') }}
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
 
         <Card>
             <CardHeader>

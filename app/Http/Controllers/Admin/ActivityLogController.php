@@ -20,7 +20,7 @@ class ActivityLogController extends Controller
                 ->latest('id')
                 ->paginate(30)
                 ->withQueryString(),
-            'filters' => $filters,
+            'filters' => (object) $filters,
         ]);
     }
 }

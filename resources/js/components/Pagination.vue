@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useTrans } from '@/composables/useTrans';
-import type { Paginated } from '@/types';
+import { computed } from 'vue';
+import type { Paginated, ResourcePage } from '@/types';
 
-defineProps<{
-    paginator: Paginated<unknown>;
+const props = defineProps<{
+    paginator: Paginated<unknown> | ResourcePage<unknown>;
 }>();
+
+// Paginators come flat from ->paginate() and nested under "meta" from API resources.
+const page = computed(() =>
+    'meta' in props.paginator ? props.paginator.meta : props.paginator,
+);
 
 const { t } = useTrans();
 
@@ -20,21 +26,21 @@ function label(text: string) {
 
 <template>
     <nav
-        v-if="paginator.last_page > 1"
+        v-if="page.last_page > 1"
         class="flex flex-wrap items-center justify-between gap-2 text-sm"
         :aria-label="t('Pagination')"
     >
         <p class="text-muted-foreground">
             {{
                 t('Showing :from–:to of :total', {
-                    from: paginator.from ?? 0,
-                    to: paginator.to ?? 0,
-                    total: paginator.total,
+                    from: page.from ?? 0,
+                    to: page.to ?? 0,
+                    total: page.total,
                 })
             }}
         </p>
         <div class="flex flex-wrap gap-1">
-            <template v-for="(link, index) in paginator.links" :key="index">
+            <template v-for="(link, index) in page.links" :key="index">
                 <Link
                     v-if="link.url"
                     :href="link.url"

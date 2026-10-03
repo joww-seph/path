@@ -44,7 +44,7 @@ class UserController extends Controller
 
         return Inertia::render('admin/Users', [
             'users' => $users,
-            'filters' => $filters,
+            'filters' => (object) $filters,
             'roles' => Role::options(),
         ]);
     }

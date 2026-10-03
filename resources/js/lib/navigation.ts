@@ -1,11 +1,17 @@
 import {
     Activity,
+    BadgeCheck,
     Building2,
+    CalendarDays,
+    Compass,
     HeartPulse,
     LayoutGrid,
+    MapPinned,
     SlidersHorizontal,
+    Store,
     Users,
 } from '@lucide/vue';
+import { explore } from '@/routes';
 import admin from '@/routes/admin';
 import office from '@/routes/office';
 import partner from '@/routes/partner';
@@ -31,6 +37,11 @@ export function navigationFor(role: Role): NavGroup[] {
                             title: 'Dashboard',
                             href: tourist.dashboard(),
                             icon: LayoutGrid,
+                        },
+                        {
+                            title: 'Explore Paoay',
+                            href: explore(),
+                            icon: Compass,
                         },
                     ],
                 },
@@ -59,6 +70,11 @@ export function navigationFor(role: Role): NavGroup[] {
                             title: 'Dashboard',
                             href: partner.dashboard(),
                             icon: LayoutGrid,
+                        },
+                        {
+                            title: 'My listings',
+                            href: partner.listings.index(),
+                            icon: Store,
                         },
                         {
                             title: 'Business profile',
@@ -106,6 +122,21 @@ function officeNavigation(): NavGroup[] {
                     title: 'Office dashboard',
                     href: office.dashboard(),
                     icon: LayoutGrid,
+                },
+                {
+                    title: 'Partner verification',
+                    href: office.partners.index(),
+                    icon: BadgeCheck,
+                },
+                {
+                    title: 'Listings',
+                    href: office.listings.index(),
+                    icon: MapPinned,
+                },
+                {
+                    title: 'Events',
+                    href: office.events.index(),
+                    icon: CalendarDays,
                 },
             ],
         },

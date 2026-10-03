@@ -61,3 +61,153 @@ export type ActivityLogEntry = {
     created_at: string;
     user: { id: number; name: string; email?: string } | null;
 };
+
+export type ListingStatus =
+    | 'draft'
+    | 'pending'
+    | 'published'
+    | 'rejected'
+    | 'archived';
+
+export type Category = {
+    id: number;
+    name: string;
+    slug: string;
+    icon?: string;
+    color?: string;
+};
+
+export type ListingCategory = {
+    name: string;
+    slug: string;
+    icon: string;
+    color: string;
+};
+
+export type ListingCard = {
+    id: number;
+    name: string;
+    slug: string;
+    summary: string | null;
+    status: ListingStatus;
+    category?: ListingCategory;
+    business_name?: string | null;
+    barangay: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    starting_price: number | null;
+    is_free: boolean;
+    is_bookable: boolean;
+    is_accessible: boolean;
+    is_featured: boolean;
+    rating_average: number;
+    reviews_count: number;
+    visit_minutes: number;
+    photo?: string | null;
+    distance_km?: number;
+};
+
+export type OpeningHours = Record<string, { open: string; close: string }>;
+
+export type ListingRate = {
+    id: number;
+    name: string;
+    description: string | null;
+    price: string;
+    unit: string;
+    unit_label: string;
+    capacity: number | null;
+    is_active: boolean;
+};
+
+export type ListingPhoto = {
+    id: number;
+    url: string;
+    thumbnail_url: string;
+    caption: string | null;
+};
+
+export type HeritageStory = {
+    id: number;
+    title: string;
+    body: string;
+    source: string | null;
+};
+
+export type ListingDetail = ListingCard & {
+    category_id: number;
+    business_id: number | null;
+    description: string | null;
+    barangay_slug: string | null;
+    address: string | null;
+    opening_hours: OpeningHours | null;
+    entrance_fee: string | null;
+    price_min: string | null;
+    price_max: string | null;
+    contact_phone: string | null;
+    contact_email: string | null;
+    website: string | null;
+    facebook_url: string | null;
+    review_note: string | null;
+    published_at: string | null;
+    business?: {
+        id: number;
+        name: string;
+        verification_status: VerificationStatus;
+    } | null;
+    rates?: ListingRate[];
+    photos?: ListingPhoto[];
+    heritage_stories?: HeritageStory[];
+};
+
+export type Barangay = {
+    slug: string;
+    name: string;
+};
+
+export type LatLng = {
+    lat: number;
+    lng: number;
+};
+
+export type PaoayEvent = {
+    id: number;
+    title: string;
+    slug: string;
+    description: string | null;
+    venue_listing_id: number | null;
+    venue_name: string | null;
+    starts_at: string;
+    ends_at: string | null;
+    is_featured: boolean;
+    venue?: {
+        id: number;
+        name: string;
+        slug: string;
+        address?: string | null;
+        latitude?: number | null;
+        longitude?: number | null;
+    } | null;
+};
+
+/**
+ * A Laravel API resource collection built from a paginator.
+ */
+export type ResourcePage<T> = {
+    data: T[];
+    links: {
+        first: string | null;
+        last: string | null;
+        prev: string | null;
+        next: string | null;
+    };
+    meta: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number | null;
+        to: number | null;
+        links: { url: string | null; label: string; active: boolean }[];
+    };
+};

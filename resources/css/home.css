@@ -156,6 +156,45 @@ body {
     border-radius: 2px;
 }
 
+.topnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 1rem 0 0;
+    font-size: 0.9375rem;
+}
+
+.topnav a {
+    padding: 0.25rem 0;
+    color: var(--color-thread);
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+}
+
+.topnav a:hover {
+    color: var(--color-gold);
+    text-decoration: underline;
+}
+
+.topnav a:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.topnav .topnav-cta {
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--color-gold);
+    border-radius: 999px;
+    color: var(--color-gold);
+}
+
+.topnav .topnav-cta:hover {
+    background: var(--color-gold);
+    color: var(--color-indigo-deep);
+    text-decoration: none;
+}
+
 /* ---------- Map ---------- */
 
 .stage {

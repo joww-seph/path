@@ -9,6 +9,9 @@ defineProps<{
     stats: {
         pendingPartners: number;
         approvedPartners: number;
+        pendingListings: number;
+        publishedListings: number;
+        upcomingEvents: number;
     };
 }>();
 
@@ -38,10 +41,24 @@ const { t } = useTrans();
             <StatCard
                 :label="t('Partners awaiting verification')"
                 :value="stats.pendingPartners"
+                :href="office.partners.index()"
             />
             <StatCard
-                :label="t('Verified partners')"
-                :value="stats.approvedPartners"
+                :label="t('Listings awaiting approval')"
+                :value="stats.pendingListings"
+                :href="office.listings.index({ query: { status: 'pending' } })"
+            />
+            <StatCard
+                :label="t('Published listings')"
+                :value="stats.publishedListings"
+                :href="
+                    office.listings.index({ query: { status: 'published' } })
+                "
+            />
+            <StatCard
+                :label="t('Upcoming events')"
+                :value="stats.upcomingEvents"
+                :href="office.events.index()"
             />
         </div>
     </div>

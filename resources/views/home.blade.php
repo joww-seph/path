@@ -15,6 +15,18 @@
             <header class="intro">
                 <p class="brand"><span class="brand-mark">PaTH</span> Paoay Travel Hub</p>
 
+                <nav class="topnav" aria-label="Main">
+                    <a href="{{ route('explore') }}">Explore</a>
+                    <a href="{{ route('map') }}">Map</a>
+                    <a href="{{ route('events.index') }}">Events</a>
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="topnav-cta">My dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}">Log in</a>
+                        <a href="{{ route('register') }}" class="topnav-cta">Plan a trip</a>
+                    @endauth
+                </nav>
+
                 <h1 class="town">Paoay</h1>
                 <p class="lede">
                     Thirty-one barangays fit together to make the town, from the dunes on the coast to the hills past the lake.

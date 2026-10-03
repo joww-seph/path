@@ -1,0 +1,318 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Young Serif', ui-serif, Georgia, serif;
+
+    /* Inabel indigo ground */
+    --color-indigo-deep: #18214a;
+    --color-indigo-weave: #222d60;
+    --color-grout: #0e1433;
+    --color-joint: #9c7454;
+    /* Paoay Church coral stone */
+    --color-stone-1: #d9b68c;
+    --color-stone-2: #cda37a;
+    --color-stone-3: #e2c49e;
+    --color-stone-4: #c59570;
+    --color-stone-5: #d4ad84;
+    --color-stone-ink: #3b2a1e;
+    /* Lake, thread, and tobacco-leaf gold for the active piece */
+    --color-lake: #4f7fae;
+    --color-thread: #ece6d8;
+    --color-thread-dim: #a9afc9;
+    --color-gold: #f1bb45;
+}
+
+/* ---------- Page ---------- */
+
+html {
+    background: var(--color-indigo-deep);
+}
+
+body {
+    margin: 0;
+    color: var(--color-thread);
+    font-family: var(--font-sans);
+    background-color: var(--color-indigo-deep);
+}
+
+/* A quiet diamond twill, after the binakol and inabel weaves of Ilocos. */
+.weave {
+    background-image:
+        repeating-linear-gradient(45deg, transparent 0 14px, rgb(255 255 255 / 0.025) 14px 15px),
+        repeating-linear-gradient(-45deg, transparent 0 14px, rgb(255 255 255 / 0.025) 14px 15px);
+}
+
+.home {
+    display: grid;
+    grid-template-columns: minmax(18rem, 25rem) 1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    max-width: 90rem;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+    box-sizing: border-box;
+}
+
+/* ---------- Intro column ---------- */
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-thread-dim);
+}
+
+.brand-mark {
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--color-gold);
+    border-radius: 0.25rem;
+    font-weight: 600;
+    color: var(--color-gold);
+}
+
+.town {
+    margin: 1.5rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(4rem, 9vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+}
+
+.lede {
+    max-width: 34ch;
+    margin: 1.25rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-thread-dim);
+}
+
+.readout {
+    min-height: 2.75rem;
+    margin: 2rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(236 230 216 / 0.15);
+}
+
+.readout-hint {
+    font-size: 0.9375rem;
+    color: var(--color-thread-dim);
+}
+
+.readout-name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1.2;
+    color: var(--color-gold);
+}
+
+.directory ul {
+    columns: 2;
+    column-gap: 1.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.directory a {
+    display: block;
+    padding: 0.25rem 0;
+    font-size: 0.9375rem;
+    color: var(--color-thread);
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+    break-inside: avoid;
+}
+
+.directory a:hover,
+.directory a.is-active {
+    color: var(--color-gold);
+    text-decoration: underline;
+}
+
+.directory a:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ---------- Map ---------- */
+
+.stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.map {
+    display: block;
+    width: 100%;
+    height: calc(100dvh - 2 * clamp(1.25rem, 3vw, 2.5rem));
+    min-height: 32rem;
+    overflow: visible;
+}
+
+/* The pieces tile the land exactly; this outline gives the coast a clean edge. */
+.land {
+    fill: var(--color-joint);
+    stroke: var(--color-grout);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+}
+
+.lake {
+    fill: var(--color-lake);
+    stroke: var(--color-grout);
+    stroke-width: 0.8;
+    stroke-linejoin: round;
+}
+
+.piece path {
+    stroke: var(--color-grout);
+    stroke-width: 0.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    transition: fill 160ms ease;
+}
+
+.tone-0 path { fill: var(--color-stone-1); }
+.tone-1 path { fill: var(--color-stone-2); }
+.tone-2 path { fill: var(--color-stone-3); }
+.tone-3 path { fill: var(--color-stone-4); }
+.tone-4 path { fill: var(--color-stone-5); }
+
+.piece {
+    cursor: pointer;
+    outline: none;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.piece:hover path,
+.piece:focus-visible path,
+.piece.is-active path {
+    fill: var(--color-gold);
+}
+
+/* Copy of the active piece, drawn last so its edge and shadow aren't hidden by neighbours. */
+.lifted {
+    pointer-events: none;
+    fill: var(--color-gold);
+    stroke: var(--color-grout);
+    stroke-width: 0.7;
+    stroke-linejoin: round;
+    transform: translate(0, -2px);
+    filter: drop-shadow(0 3px 2px rgb(8 12 32 / 0.55));
+}
+
+.lifted:not([href]),
+.lifted[href=''] {
+    display: none;
+}
+
+.labels text {
+    font-family: var(--font-sans);
+    font-size: 6px;
+    font-weight: 500;
+    fill: var(--color-stone-ink);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.labels .lake-label {
+    font-family: var(--font-display);
+    font-size: 7px;
+    font-weight: 400;
+    fill: var(--color-thread);
+}
+
+/* ---------- The one moment: the pieces fly in and lock into place ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+    .piece {
+        animation: assemble 900ms cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+        animation-delay: calc(var(--order) * 55ms + 150ms);
+    }
+
+    .land,
+    .lake,
+    .labels {
+        animation: settle 600ms ease-out both;
+    }
+
+    .land,
+    .lake {
+        animation-delay: 0ms;
+    }
+
+    .labels {
+        animation-delay: calc(31 * 55ms + 900ms);
+    }
+}
+
+@keyframes assemble {
+    from {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(1.08);
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes settle {
+    from {
+        opacity: 0;
+    }
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 56rem) {
+    .home {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 1.25rem 1rem 2.5rem;
+    }
+
+    .intro {
+        display: contents;
+    }
+
+    .brand { order: 1; }
+    .town { order: 2; margin-top: 1rem; }
+    .lede { order: 3; margin-top: 0.75rem; }
+    .stage { order: 4; }
+    .readout { order: 5; margin-top: 0.5rem; }
+    .directory { order: 6; }
+
+    .map {
+        height: auto;
+        min-height: 0;
+        max-height: 80dvh;
+    }
+
+    .directory a {
+        padding: 0.4375rem 0;
+    }
+}

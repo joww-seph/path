@@ -1,7 +1,13 @@
+export type Role = 'tourist' | 'partner' | 'tourism_officer' | 'admin';
+
 export type User = {
     id: number;
     name: string;
     email: string;
+    role: Role;
+    phone: string | null;
+    phone_verified_at: string | null;
+    locale: string;
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;

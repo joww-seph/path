@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\PhoneVerificationController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -24,4 +25,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
+
+    Route::post('settings/phone/code', [PhoneVerificationController::class, 'send'])
+        ->middleware('throttle:3,1')
+        ->name('phone.code');
+    Route::post('settings/phone/verify', [PhoneVerificationController::class, 'verify'])
+        ->middleware('throttle:6,1')
+        ->name('phone.verify');
 });

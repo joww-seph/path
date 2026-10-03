@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import GoogleButton from '@/components/GoogleButton.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -8,16 +9,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
+import { register as partnerRegister } from '@/routes/partner';
 import { store } from '@/routes/register';
 
 defineProps<{
     passwordRules: string;
+    canLoginWithGoogle?: boolean;
 }>();
 
 defineOptions({
     layout: {
         title: 'Create an account',
-        description: 'Enter your details below to create your account',
+        description: 'Create a tourist account to plan and book your trip',
     },
 });
 </script>
@@ -62,6 +65,18 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
+                <Label for="phone">Mobile number (optional)</Label>
+                <Input
+                    id="phone"
+                    type="tel"
+                    autocomplete="tel"
+                    name="phone"
+                    placeholder="09XX XXX XXXX"
+                />
+                <InputError :message="errors.phone" />
+            </div>
+
+            <div class="grid gap-2">
                 <Label for="password">Password</Label>
                 <PasswordInput
                     id="password"
@@ -99,6 +114,8 @@ defineOptions({
                 <Spinner v-if="processing" />
                 Create account
             </Button>
+
+            <GoogleButton v-if="canLoginWithGoogle" />
         </div>
 
         <div class="text-center text-sm text-muted-foreground">
@@ -109,6 +126,15 @@ defineOptions({
                 :tabindex="6"
                 >Log in</TextLink
             >
+            <p class="mt-2">
+                Run a business in Paoay?
+                <TextLink
+                    :href="partnerRegister()"
+                    class="underline underline-offset-4"
+                    :tabindex="7"
+                    >Register as a partner</TextLink
+                >
+            </p>
         </div>
     </Form>
 </template>

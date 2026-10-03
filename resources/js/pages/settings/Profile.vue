@@ -4,11 +4,13 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/DeleteUser.vue';
+import PhoneVerification from '@/components/PhoneVerification.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { NativeSelect } from '@/components/ui/native-select';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 
@@ -23,6 +25,12 @@ defineOptions({
     },
 });
 
+defineProps<{
+    mustVerifyEmail: boolean;
+    status?: string;
+    locales: Record<string, string>;
+}>();
+
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 </script>
@@ -36,7 +44,7 @@ const user = computed(() => page.props.auth.user);
         <Heading
             variant="small"
             title="Profile"
-            description="Update your name and email address"
+            description="Update your name, email, mobile number and language"
         />
 
         <Form
@@ -93,6 +101,38 @@ const user = computed(() => page.props.auth.user);
                 </div>
             </div>
 
+            <div class="grid gap-2">
+                <Label for="phone">Mobile number</Label>
+                <Input
+                    id="phone"
+                    type="tel"
+                    class="mt-1 block w-full"
+                    name="phone"
+                    :default-value="user.phone ?? ''"
+                    autocomplete="tel"
+                    placeholder="09XX XXX XXXX"
+                />
+                <InputError class="mt-2" :message="errors.phone" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="locale">Language</Label>
+                <NativeSelect
+                    id="locale"
+                    name="locale"
+                    :default-value="user.locale"
+                >
+                    <option
+                        v-for="(label, code) in locales"
+                        :key="code"
+                        :value="code"
+                    >
+                        {{ label }}
+                    </option>
+                </NativeSelect>
+                <InputError class="mt-2" :message="errors.locale" />
+            </div>
+
             <div class="flex items-center gap-4">
                 <Button :disabled="processing" data-test="update-profile-button"
                     >Save</Button
@@ -100,6 +140,8 @@ const user = computed(() => page.props.auth.user);
             </div>
         </Form>
     </div>
+
+    <PhoneVerification v-if="user.phone" />
 
     <DeleteUser />
 </template>

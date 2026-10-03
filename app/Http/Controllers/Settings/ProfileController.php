@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\SetLocale;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Support\PhoneNumber;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +24,7 @@ class ProfileController extends Controller
         return Inertia::render('settings/Profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'locales' => SetLocale::SUPPORTED,
         ]);
     }
 
@@ -30,10 +33,17 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->user()->fill([
+            ...$request->validated(),
+            'phone' => PhoneNumber::normalize($request->validated('phone')),
+        ]);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
+        }
+
+        if ($request->user()->isDirty('phone')) {
+            $request->user()->phone_verified_at = null;
         }
 
         $request->user()->save();

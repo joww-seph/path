@@ -3,6 +3,7 @@
 namespace App\Concerns;
 
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +19,18 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'phone' => $this->phoneRules(),
         ];
+    }
+
+    /**
+     * Philippine mobile numbers, written as 09XXXXXXXXX or +639XXXXXXXXX.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function phoneRules(bool $required = false): array
+    {
+        return [$required ? 'required' : 'nullable', 'string', 'regex:'.PhoneNumber::PATTERN];
     }
 
     /**

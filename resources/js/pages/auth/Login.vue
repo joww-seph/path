@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import GoogleButton from '@/components/GoogleButton.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -9,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
+import { register as partnerRegister } from '@/routes/partner';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
@@ -22,6 +24,7 @@ defineOptions({
 defineProps<{
     status?: string;
     canResetPassword: boolean;
+    canLoginWithGoogle?: boolean;
 }>();
 </script>
 
@@ -97,11 +100,17 @@ defineProps<{
                 <Spinner v-if="processing" />
                 Log in
             </Button>
+
+            <GoogleButton v-if="canLoginWithGoogle" />
         </div>
 
         <div class="text-center text-sm text-muted-foreground">
             Don't have an account?
             <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            <span class="mx-1">·</span>
+            <TextLink :href="partnerRegister()" :tabindex="6"
+                >Register your business</TextLink
+            >
         </div>
     </Form>
 </template>

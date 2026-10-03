@@ -44,6 +44,7 @@ use Illuminate\Support\Str;
  * @property string|null $website
  * @property string|null $facebook_url
  * @property bool $is_bookable
+ * @property int|null $default_daily_slots
  * @property bool $is_accessible
  * @property bool $is_featured
  * @property ListingStatus $status
@@ -59,7 +60,7 @@ use Illuminate\Support\Str;
 #[Fillable([
     'category_id', 'name', 'summary', 'description', 'barangay', 'address', 'latitude', 'longitude',
     'opening_hours', 'entrance_fee', 'price_min', 'price_max', 'visit_minutes', 'contact_phone',
-    'contact_email', 'website', 'facebook_url', 'is_bookable', 'is_accessible',
+    'contact_email', 'website', 'facebook_url', 'is_bookable', 'is_accessible', 'default_daily_slots',
 ])]
 class Listing extends Model
 {
@@ -251,6 +252,22 @@ class Listing extends Model
     public function heritageStories(): HasMany
     {
         return $this->hasMany(HeritageStory::class)->orderBy('position');
+    }
+
+    /**
+     * @return HasMany<AvailabilityBlock, $this>
+     */
+    public function availability(): HasMany
+    {
+        return $this->hasMany(AvailabilityBlock::class);
+    }
+
+    /**
+     * @return HasMany<Booking, $this>
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
     }
 
     /**

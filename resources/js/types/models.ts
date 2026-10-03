@@ -247,6 +247,7 @@ export type ItineraryItem = {
         contact_phone: string | null;
         address: string | null;
     } | null;
+    booking: { code: string; status: BookingStatus } | null;
     latitude: number | null;
     longitude: number | null;
     day_number: number;
@@ -291,4 +292,49 @@ export type TripMember = {
     name: string;
     email: string;
     role: TripRole;
+};
+
+export type BookingStatus =
+    | 'pending'
+    | 'confirmed'
+    | 'declined'
+    | 'cancelled'
+    | 'expired'
+    | 'completed'
+    | 'no_show';
+
+export type Booking = {
+    id: number;
+    code: string;
+    status: BookingStatus;
+    status_label: string;
+    rate_name: string;
+    unit: string;
+    unit_label: string;
+    unit_price: string;
+    date: string;
+    time: string | null;
+    nights: number;
+    pax: number;
+    quantity: number;
+    total_amount: string;
+    tourist_note: string | null;
+    partner_note: string | null;
+    expires_at: string | null;
+    confirmed_at: string | null;
+    checked_in_at: string | null;
+    cancelled_at: string | null;
+    created_at: string;
+    is_cancellable: boolean;
+    listing?: {
+        id: number;
+        name: string;
+        slug: string;
+        address: string | null;
+        contact_phone: string | null;
+        latitude: number | null;
+        longitude: number | null;
+    };
+    tourist?: { id: number; name: string; email: string; phone: string | null };
+    trip?: { id: number; title: string } | null;
 };

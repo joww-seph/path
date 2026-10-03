@@ -1,5 +1,6 @@
 import {
     Activity,
+    BarChart3,
     BadgeCheck,
     Building2,
     CalendarDays,
@@ -7,6 +8,8 @@ import {
     HeartPulse,
     LayoutGrid,
     Map as MapIcon,
+    QrCode,
+    Ticket,
     MapPinned,
     SlidersHorizontal,
     Store,
@@ -45,6 +48,11 @@ export function navigationFor(role: Role): NavGroup[] {
                             icon: MapIcon,
                         },
                         {
+                            title: 'My bookings',
+                            href: tourist.bookings.index(),
+                            icon: Ticket,
+                        },
+                        {
                             title: 'Explore Paoay',
                             href: explore(),
                             icon: Compass,
@@ -81,6 +89,21 @@ export function navigationFor(role: Role): NavGroup[] {
                             title: 'My listings',
                             href: partner.listings.index(),
                             icon: Store,
+                        },
+                        {
+                            title: 'Bookings',
+                            href: partner.bookings.index(),
+                            icon: Ticket,
+                        },
+                        {
+                            title: 'Check in a guest',
+                            href: partner.checkIn.scanner(),
+                            icon: QrCode,
+                        },
+                        {
+                            title: 'Reports',
+                            href: partner.reports(),
+                            icon: BarChart3,
                         },
                         {
                             title: 'Business profile',

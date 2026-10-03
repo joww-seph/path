@@ -24,7 +24,7 @@ class BuildPlannerView
      */
     public function handle(Trip $trip, Request $request): array
     {
-        $trip->load(['owner', 'members', 'items.listing.category', 'items.listing.coverPhoto']);
+        $trip->load(['owner', 'members', 'items.listing.category', 'items.listing.coverPhoto', 'items.booking']);
         $items = $trip->items;
 
         $days = collect(range(1, max($trip->dayCount(), (int) $items->max('day_number'))))

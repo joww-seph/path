@@ -6,6 +6,7 @@ import {
     Circle,
     GripVertical,
     Pencil,
+    Ticket,
     Trash2,
 } from '@lucide/vue';
 import CategoryIcon from '@/components/guide/CategoryIcon.vue';
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useTrans } from '@/composables/useTrans';
 import { formatClock } from '@/lib/format';
 import listingsRoutes from '@/routes/listings';
+import tourist from '@/routes/tourist';
 import type { ItineraryItem, PlannerWarning } from '@/types';
 
 defineProps<{
@@ -92,6 +94,14 @@ const { t } = useTrans();
                     }}</template
                 >
             </p>
+            <Link
+                v-if="item.booking"
+                :href="tourist.bookings.show(item.booking.code)"
+                class="mt-1 inline-flex items-center gap-1 rounded bg-accent px-1.5 py-0.5 text-xs font-medium text-accent-foreground"
+            >
+                <Ticket class="size-3" />
+                {{ t('Booked · :code', { code: item.booking.code }) }}
+            </Link>
             <p
                 v-if="item.notes"
                 class="mt-1 text-sm whitespace-pre-line text-muted-foreground"

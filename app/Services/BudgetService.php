@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\BookingStatus;
 use App\Enums\ExpenseCategory;
 use App\Models\Expense;
 use App\Models\Trip;
@@ -99,15 +100,21 @@ class BudgetService
     }
 
     /**
-     * A rough cost of the plan: entrance fees and starting prices for every traveller.
+     * A rough cost of the plan: bookings, plus entrance fees and starting prices for every traveller.
      */
     public function estimate(Trip $trip): float
     {
         $trip->loadMissing('items.listing');
 
-        return (float) $trip->items->sum(
-            fn ($item) => (float) ($item->listing?->entrance_fee ?? $item->listing?->price_min ?? 0) * $trip->pax,
-        );
+        $bookings = $trip->bookings()->whereIn('status', [BookingStatus::Pending, BookingStatus::Confirmed, BookingStatus::Completed])->get();
+        $bookedListings = $bookings->pluck('listing_id')->all();
+
+        // Booked places count at their booking price; other stops at their fee or starting price.
+        $plannedStops = $trip->items
+            ->filter(fn ($item) => ! in_array($item->listing_id, $bookedListings, true))
+            ->sum(fn ($item) => (float) ($item->listing?->entrance_fee ?? $item->listing?->price_min ?? 0) * $trip->pax);
+
+        return (float) $plannedStops + (float) $bookings->sum('total_amount');
     }
 
     public function spent(Trip $trip): float

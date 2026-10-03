@@ -15,6 +15,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import CategoryIcon from '@/components/guide/CategoryIcon.vue';
+import BookingRequestCard from '@/components/bookings/BookingRequestCard.vue';
 import AddToTripCard from '@/components/trips/AddToTripCard.vue';
 import LeafletMap from '@/components/guide/LeafletMap.vue';
 import ListingCard from '@/components/guide/ListingCard.vue';
@@ -39,6 +40,7 @@ const props = defineProps<{
     myTrips:
         | { id: number; title: string; start_date: string; day_count: number }[]
         | null;
+    availability: Record<string, number | null> | null;
 }>();
 
 const { t } = useTrans();
@@ -312,6 +314,18 @@ const paragraphs = (text: string | null) =>
             </div>
 
             <aside class="space-y-6">
+                <BookingRequestCard
+                    v-if="
+                        listing.status === 'published' &&
+                        listing.is_bookable &&
+                        availability &&
+                        listing.rates?.length
+                    "
+                    :listing-id="listing.id"
+                    :rates="listing.rates"
+                    :availability="availability"
+                    :trips="myTrips"
+                />
                 <AddToTripCard
                     v-if="listing.status === 'published'"
                     :listing-id="listing.id"

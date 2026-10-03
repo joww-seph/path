@@ -37,6 +37,10 @@ class ItineraryItemResource extends JsonResource
                 'contact_phone' => $listing->contact_phone,
                 'address' => $listing->address,
             ],
+            'booking' => $this->booking_id === null ? null : [
+                'code' => $this->booking?->code,
+                'status' => $this->booking?->status->value,
+            ],
             'latitude' => $this->latitude(),
             'longitude' => $this->longitude(),
             'day_number' => $this->day_number,

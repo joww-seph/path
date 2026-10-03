@@ -34,7 +34,34 @@ class ListingController extends Controller
             'nearby' => ListingCardResource::collection($this->nearby($listing))->resolve(),
             'paymentInstructions' => $listing->business?->payment_instructions,
             'myTrips' => $this->tripsFor($request->user()),
+            'availability' => $listing->is_bookable ? $this->availability($listing) : null,
         ]);
+    }
+
+    /**
+     * Free slots for each of the next 60 days: null when unlimited, 0 when full or closed.
+     *
+     * @return array<string, int|null>
+     */
+    private function availability(Listing $listing): array
+    {
+        $blocks = $listing->availability()
+            ->whereDate('date', '>=', now()->toDateString())->whereDate('date', '<=', now()->addDays(60)->toDateString())
+            ->get()
+            ->keyBy(fn ($block) => $block->date->toDateString());
+
+        return collect(range(0, 60))->mapWithKeys(function (int $offset) use ($listing, $blocks) {
+            $date = now()->addDays($offset)->toDateString();
+            $block = $blocks[$date] ?? null;
+
+            if ($block?->is_closed || ($listing->opening_hours !== null && ! $listing->isOpenOn(now()->addDays($offset)))) {
+                return [$date => 0];
+            }
+
+            $total = $block?->slots_total ?? $listing->default_daily_slots;
+
+            return [$date => $total === null ? null : max(0, $total - ($block->slots_booked ?? 0))];
+        })->all();
     }
 
     /**

@@ -155,6 +155,23 @@ function destroy() {
                 :listing-slug="listing.slug"
                 :photos="listing.photos ?? []"
             />
+            <div
+                v-if="listing.is_bookable"
+                class="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4"
+            >
+                <p class="text-sm">
+                    {{
+                        t(
+                            'Set how many bookings you can take each day, and close dates.',
+                        )
+                    }}
+                </p>
+                <Button as-child variant="outline" size="sm">
+                    <Link :href="partner.listings.availability(listing.slug)">{{
+                        t('Manage availability')
+                    }}</Link>
+                </Button>
+            </div>
             <RateManager
                 :listing-slug="listing.slug"
                 :rates="listing.rates ?? []"

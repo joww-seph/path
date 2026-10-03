@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $trip_id
  * @property int|null $listing_id
+ * @property int|null $booking_id
  * @property string|null $custom_title
  * @property float|null $custom_latitude
  * @property float|null $custom_longitude
@@ -34,7 +35,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Trip $trip
  * @property-read Listing|null $listing
  */
-#[Fillable(['listing_id', 'custom_title', 'custom_latitude', 'custom_longitude', 'day_number', 'position', 'duration_minutes', 'fixed_start_time', 'notes', 'is_done', 'client_uuid'])]
+#[Fillable(['listing_id', 'booking_id', 'custom_title', 'custom_latitude', 'custom_longitude', 'day_number', 'position', 'duration_minutes', 'fixed_start_time', 'notes', 'is_done', 'client_uuid'])]
 class ItineraryItem extends Model
 {
     /** @use HasFactory<ItineraryItemFactory> */
@@ -93,6 +94,14 @@ class ItineraryItem extends Model
     public function trip(): BelongsTo
     {
         return $this->belongsTo(Trip::class);
+    }
+
+    /**
+     * @return BelongsTo<Booking, $this>
+     */
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
     }
 
     /**

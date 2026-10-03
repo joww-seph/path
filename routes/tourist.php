@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Tourist\BookingController;
 use App\Http\Controllers\Tourist\BudgetController;
 use App\Http\Controllers\Tourist\DashboardController;
 use App\Http\Controllers\Tourist\EmergencyContactController;
@@ -48,3 +49,9 @@ Route::scopeBindings()->group(function () {
     Route::put('trips/{trip}/expenses/{expense}', [ExpenseController::class, 'update'])->name('trips.expenses.update');
     Route::delete('trips/{trip}/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('trips.expenses.destroy');
 });
+
+Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+Route::post('bookings', [BookingController::class, 'store'])->middleware('throttle:20,1')->name('bookings.store');
+Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+Route::get('bookings/{booking}/pdf', [BookingController::class, 'pdf'])->name('bookings.pdf');

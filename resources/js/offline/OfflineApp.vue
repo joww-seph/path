@@ -28,7 +28,7 @@ const selectedDay = ref(1);
 const pending = ref(0);
 const loading = ref(true);
 const syncMessage = ref<string | null>(null);
-const tab = ref<'plan' | 'spend' | 'help'>('plan');
+const tab = ref<'plan' | 'vouchers' | 'spend' | 'help'>('plan');
 
 const expense = reactive({ amount: '', category: 'food', note: '' });
 
@@ -41,6 +41,20 @@ const categories = [
     ['others', 'Others'],
 ];
 
+type Voucher = {
+    code: string;
+    listing: string;
+    address: string | null;
+    contact_phone: string | null;
+    rate_name: string;
+    date: string;
+    time: string | null;
+    pax: number;
+    total_amount: string;
+    qr: string;
+};
+
+const vouchers = computed(() => (current.value?.vouchers ?? []) as Voucher[]);
 const current = computed(
     () => trips.value.find((trip) => trip.trip.id === selectedId.value) ?? null,
 );
@@ -264,12 +278,13 @@ onMounted(async () => {
                 </p>
 
                 <nav
-                    class="mt-4 grid grid-cols-3 gap-1 rounded-lg bg-muted p-1 text-sm"
+                    class="mt-4 grid grid-cols-4 gap-1 rounded-lg bg-muted p-1 text-sm"
                     aria-label="Sections"
                 >
                     <button
                         v-for="[key, label] in [
                             ['plan', 'Itinerary'],
+                            ['vouchers', 'Vouchers'],
                             ['spend', 'Spending'],
                             ['help', 'Help & SOS'],
                         ]"
@@ -377,6 +392,50 @@ onMounted(async () => {
                     </ol>
                 </section>
 
+                <section v-else-if="tab === 'vouchers'" class="mt-4 space-y-4">
+                    <p
+                        v-if="vouchers.length === 0"
+                        class="text-sm text-muted-foreground"
+                    >
+                        No confirmed bookings for this trip.
+                    </p>
+                    <article
+                        v-for="voucher in vouchers"
+                        :key="voucher.code"
+                        class="rounded-xl border p-4 text-center"
+                    >
+                        <p class="font-semibold">{{ voucher.listing }}</p>
+                        <p class="text-sm text-muted-foreground">
+                            {{ voucher.rate_name }} ·
+                            {{ formatDate(voucher.date)
+                            }}<template v-if="voucher.time">
+                                · {{ formatClock(voucher.time) }}</template
+                            >
+                        </p>
+                        <p
+                            class="mt-2 font-mono text-2xl font-bold tracking-widest"
+                        >
+                            {{ voucher.code }}
+                        </p>
+                        <div
+                            class="mx-auto mt-3 w-52 rounded-lg bg-white p-2"
+                            role="img"
+                            :aria-label="`QR code for ${voucher.code}`"
+                            v-html="voucher.qr"
+                        />
+                        <p class="mt-2 text-sm">
+                            {{ voucher.pax }} guests · Pay
+                            {{ formatPeso(voucher.total_amount) }} to the
+                            partner
+                        </p>
+                        <a
+                            v-if="voucher.contact_phone"
+                            :href="`tel:${voucher.contact_phone}`"
+                            class="text-sm text-primary"
+                            >Call {{ voucher.contact_phone }}</a
+                        >
+                    </article>
+                </section>
                 <section v-else-if="tab === 'spend'" class="mt-4 space-y-4">
                     <div class="rounded-xl border p-4">
                         <p

@@ -37,6 +37,7 @@ class DemoListingsSeeder extends Seeder
                 'visit_minutes' => 90,
                 'contact_phone' => '09181234567',
                 'is_bookable' => true,
+                'default_daily_slots' => 3,
             ]);
 
             foreach ([

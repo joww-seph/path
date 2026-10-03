@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Trips\BuildPlannerView;
+use App\Enums\BookingStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Hotline;
 use App\Models\Listing;
 use App\Models\Trip;
 use App\Services\BudgetService;
+use App\Support\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -38,6 +41,23 @@ class OfflineTripController extends Controller
             'travellers' => $trip->travellers()->map->only(['id', 'name'])->values(),
             'hotlines' => Hotline::orderBy('position')->get(['name', 'type', 'phone', 'description']),
             'emergency_contacts' => $request->user()->emergencyContacts()->get(['name', 'relationship', 'phone']),
+            'vouchers' => $request->user()->bookings()
+                ->where('trip_id', $trip->id)
+                ->where('status', BookingStatus::Confirmed)
+                ->with('listing:id,name,address,contact_phone')
+                ->get()
+                ->map(fn (Booking $booking) => [
+                    'code' => $booking->code,
+                    'listing' => $booking->listing->name,
+                    'address' => $booking->listing->address,
+                    'contact_phone' => $booking->listing->contact_phone,
+                    'rate_name' => $booking->rate_name,
+                    'date' => $booking->date->toDateString(),
+                    'time' => $booking->time ? substr($booking->time, 0, 5) : null,
+                    'pax' => $booking->pax,
+                    'total_amount' => $booking->total_amount,
+                    'qr' => QrCode::svg(route('partner.check-in.show', $booking->qr_token)),
+                ]),
             'can_update' => Gate::allows('update', $trip),
         ]);
     }

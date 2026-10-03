@@ -8,7 +8,7 @@
         <title>Paoay Travel Hub</title>
 
         @fonts
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/home.css', 'resources/js/home.js'])
     </head>
     <body class="weave">
         <div class="home">

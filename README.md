@@ -1,60 +1,82 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PaTH — Paoay Travel Hub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+PaTH is a mobile-first travel app (PWA) for Paoay, Ilocos Norte. It's built from `public/PaTH-Project-Write-Up.md` and `public/PaTH-Development-Gameplan.md`. Tourists use it to explore the town's sites, plan and share itineraries, track a shared budget, book local services with QR vouchers, and get help in an emergency, even when they have no signal. Local businesses manage their listings and bookings. The Municipal Tourism Office verifies partners, posts advisories, watches SOS alerts and reads visitor analytics.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 13 (PHP 8.3+), Fortify, Socialite (Google), queues and the scheduler
+- Inertia 3, Vue 3 (TypeScript), Tailwind CSS 4, shadcn-vue, Wayfinder
+- Leaflet with OpenStreetMap tiles, `vite-plugin-pwa` (a custom service worker), and localforage for offline data
+- dompdf for vouchers and itinerary PDFs, bacon-qr-code, html5-qrcode
+- PHPUnit feature tests, Pint, and `vp` (oxlint + prettier)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Getting started
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```sh
+composer setup      # installs dependencies, creates .env and the SQLite database, migrates and seeds, builds assets
+composer dev        # starts the server, queue worker, logs and Vite
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Then open http://localhost:8000.
 
-## Contributing
+### Demo accounts
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Every demo account uses the password `password`.
 
-## Code of Conduct
+| Role | Email |
+|---|---|
+| Tourist | tourist@path.test |
+| Partner (verified business) | partner@path.test |
+| Partner (awaiting verification) | newpartner@path.test |
+| Tourism officer | office@path.test |
+| Administrator | admin@path.test |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The seeders load Paoay's real heritage sites, stories, festivals and emergency hotlines. They also load demo businesses and itinerary templates. **Check every hotline number before a pilot.**
 
-## Security Vulnerabilities
+## Roles and areas
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Area | URL prefix | Who |
+|---|---|---|
+| Destination guide, map, events, hotlines | `/`, `/explore`, `/map`, `/events`, `/hotlines` | everyone |
+| Trips, budget, bookings, SOS, reviews | `/my` | tourists |
+| Listings, bookings, check-in, availability, reports, reviews | `/partner` | partners |
+| Partner verification, listings, events, advisories, SOS monitor, reviews, analytics | `/office` | tourism officers and admins |
+| Users and roles, activity log, hotlines | `/admin` | admins |
 
-## License
+## Optional integrations
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The app works without any API keys. Each integration below is turned off until you set its key in `.env`:
 
-# path
+| Variable | What it turns on | Without it |
+|---|---|---|
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | "Continue with Google" | the button is hidden |
+| `SEMAPHORE_API_KEY` | SMS for phone OTP and SOS texts (Semaphore, PH) | texts are written to the log |
+| `OPENROUTESERVICE_API_KEY` | real road travel times between stops | estimates from straight-line distance |
+| `OPENWEATHERMAP_API_KEY` | 5-day forecast and rain/storm warnings in the planner | no weather |
+| `VITE_MAP_TILE_URL` | a different tile provider | OpenStreetMap |
+
+Mail (booking updates, advisories, SOS emails to contacts) uses the normal Laravel `MAIL_*` settings.
+
+## Background work
+
+Run a queue worker (`php artisan queue:work`) and the scheduler (`php artisan schedule:work`, or cron `* * * * * php artisan schedule:run`):
+
+- expire booking requests that partners haven't answered (every 15 minutes)
+- mark no-shows (daily, 00:30)
+- send trip reminders the evening before (daily, 18:00)
+- send booking reminders about an hour before (every 5 minutes)
+
+## Offline use
+
+Tourists press **Make available offline** on a trip. This saves the itinerary, booking vouchers, hotlines and emergency contacts on the phone. Map tiles and photos they have viewed are cached too. With no signal, `/offline` opens the saved trip. Expenses added offline are queued, then synced to `/api/sync` when the phone reconnects.
+
+## Checks
+
+```sh
+composer test            # Pint check + PHPUnit
+npm run types:check      # vue-tsc
+npx vp check             # lint + formatting for the frontend
+composer ci:check        # everything above
+```
+
+Interface strings are written in English and translated to Filipino in `lang/fil.json`. Users switch language from the sidebar or the header.

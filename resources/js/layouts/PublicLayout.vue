@@ -3,7 +3,9 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Menu, X } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import InstallAppButton from '@/components/InstallAppButton.vue';
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
+import OfflineBanner from '@/components/OfflineBanner.vue';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
@@ -65,6 +67,7 @@ const links = computed(() => [
                 </nav>
 
                 <div class="ml-auto hidden items-center gap-2 md:flex">
+                    <InstallAppButton />
                     <LanguageSwitcher />
                     <Button v-if="user" as-child size="sm">
                         <Link :href="dashboard()">{{ t('My dashboard') }}</Link>
@@ -115,6 +118,8 @@ const links = computed(() => [
                 <div class="pt-2"><LanguageSwitcher /></div>
             </nav>
         </header>
+
+        <OfflineBanner />
 
         <main class="flex-1">
             <slot />

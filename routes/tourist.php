@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Tourist\BudgetController;
 use App\Http\Controllers\Tourist\DashboardController;
 use App\Http\Controllers\Tourist\EmergencyContactController;
+use App\Http\Controllers\Tourist\ExpenseController;
 use App\Http\Controllers\Tourist\ItineraryItemController;
 use App\Http\Controllers\Tourist\PreferencesController;
 use App\Http\Controllers\Tourist\TripController;
@@ -39,3 +41,10 @@ Route::delete('trips/{trip}/members/{member}', [TripMemberController::class, 'de
 
 Route::post('trips/{trip}/share', [TripShareController::class, 'store'])->name('trips.share.store');
 Route::delete('trips/{trip}/share', [TripShareController::class, 'destroy'])->name('trips.share.destroy');
+
+Route::get('trips/{trip}/budget', BudgetController::class)->name('trips.budget');
+Route::scopeBindings()->group(function () {
+    Route::post('trips/{trip}/expenses', [ExpenseController::class, 'store'])->name('trips.expenses.store');
+    Route::put('trips/{trip}/expenses/{expense}', [ExpenseController::class, 'update'])->name('trips.expenses.update');
+    Route::delete('trips/{trip}/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('trips.expenses.destroy');
+});

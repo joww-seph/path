@@ -4,6 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import type * as Leaflet from 'leaflet';
 import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import { TILE_ATTRIBUTION, TILE_URL } from '@/lib/map';
 import type { LatLng } from '@/types';
 
 export type MapMarker = {
@@ -213,10 +214,9 @@ onMounted(async () => {
         props.zoom,
     );
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(TILE_URL, {
         maxZoom: 19,
-        attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: TILE_ATTRIBUTION,
     }).addTo(map.value);
 
     if (props.picker) {

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
@@ -23,6 +24,7 @@ use Illuminate\Support\Str;
  * @property CarbonImmutable $end_date
  * @property int $pax
  * @property string|null $budget
+ * @property int $budget_alert_level
  * @property string $day_starts_at
  * @property TravelMode $travel_mode
  * @property string|null $notes
@@ -131,6 +133,24 @@ class Trip extends Model
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'trip_members')->using(TripMember::class)->withPivot('role')->withTimestamps();
+    }
+
+    /**
+     * The owner and every companion: the people who share the costs.
+     *
+     * @return Collection<int, User>
+     */
+    public function travellers()
+    {
+        return collect([$this->owner])->concat($this->members)->unique('id')->values();
+    }
+
+    /**
+     * @return HasMany<Expense, $this>
+     */
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 
     /**

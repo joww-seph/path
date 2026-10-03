@@ -5,6 +5,7 @@ import AuthLayout from '@/layouts/AuthLayout.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
+import { initializePwa } from '@/lib/pwa';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -43,3 +44,6 @@ initializeTheme();
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();
+
+// Offline support: service worker, install prompt and syncing changes made without signal...
+initializePwa();

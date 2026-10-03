@@ -2,6 +2,7 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     AlertTriangle,
+    CloudDownload,
     CalendarDays,
     Copy,
     FileDown,
@@ -12,9 +13,11 @@ import {
     Sparkles,
     Trash2,
     Users,
+    Wallet,
     Wand2,
 } from '@lucide/vue';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 import draggable from 'vuedraggable';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -37,6 +40,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { useTrans } from '@/composables/useTrans';
 import { formatDate, formatPeso } from '@/lib/format';
+import { getOfflineTrip, saveTripOffline } from '@/offline/store';
 import { explore } from '@/routes';
 import listingsRoutes from '@/routes/listings';
 import tourist from '@/routes/tourist';
@@ -71,6 +75,35 @@ const { t } = useTrans();
 const page = usePage();
 
 const selectedDay = ref(1);
+const savingOffline = ref(false);
+const savedOfflineAt = ref<string | null>(null);
+
+onMounted(async () => {
+    savedOfflineAt.value =
+        (await getOfflineTrip(props.trip.id))?.saved_at ?? null;
+});
+
+async function makeAvailableOffline() {
+    savingOffline.value = true;
+
+    try {
+        const saved = await saveTripOffline(props.trip.id);
+        savedOfflineAt.value = saved.saved_at;
+        toast.success(
+            t(
+                'Saved on this phone. Open it any time from /offline, even without signal.',
+            ),
+        );
+    } catch {
+        toast.error(
+            t(
+                'Could not save the trip for offline use. Check your connection and try again.',
+            ),
+        );
+    } finally {
+        savingOffline.value = false;
+    }
+}
 const editingTrip = ref(false);
 const sharing = ref(false);
 const editingItem = ref<ItineraryItem | null>(null);
@@ -304,9 +337,27 @@ function deleteTrip() {
                     ><Share2 /> {{ t('Share') }}</Button
                 >
                 <Button as-child variant="outline" size="sm">
+                    <Link :href="tourist.trips.budget(trip.id)"
+                        ><Wallet /> {{ t('Budget') }}</Link
+                    >
+                </Button>
+                <Button as-child variant="outline" size="sm">
                     <a :href="tourist.trips.pdf.url(trip.id)"
                         ><FileDown /> {{ t('PDF') }}</a
                     >
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    :disabled="savingOffline"
+                    @click="makeAvailableOffline"
+                >
+                    <CloudDownload />
+                    {{
+                        savedOfflineAt
+                            ? t('Update offline copy')
+                            : t('Make available offline')
+                    }}
                 </Button>
             </div>
         </div>

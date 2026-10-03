@@ -29,3 +29,5 @@ Thumbs.db
 /resources/js/actions
 /resources/js/routes
 /resources/js/wayfinder
+
+/public/sw.js

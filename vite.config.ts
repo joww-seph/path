@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { google } from 'laravel-vite-plugin/fonts';
+import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig, lazyPlugins } from 'vite-plus';
 
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
                 'resources/js/app.ts',
                 'resources/css/home.css',
                 'resources/js/home.js',
+                'resources/js/offline.ts',
             ],
             refresh: true,
             fonts: [
@@ -37,6 +39,32 @@ export default defineConfig({
         }),
         wayfinder({
             formVariants: true,
+        }),
+        // Installable PWA. The service worker and manifest are written to public/ so they cover
+        // the whole site; the precache lists the built assets under /build.
+        VitePWA({
+            strategies: 'injectManifest',
+            srcDir: 'resources/js',
+            filename: 'sw.ts',
+            outDir: 'public',
+            scope: '/',
+            base: '/',
+            buildBase: '/build/',
+            injectRegister: false,
+            includeAssets: [],
+            injectManifest: {
+                globDirectory: 'public/build',
+                globPatterns: ['**/*.{js,css,woff2,svg,png,webp}'],
+                modifyURLPrefix: { '': '/build/' },
+                maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+                additionalManifestEntries: [
+                    { url: '/offline', revision: String(Date.now()) },
+                    { url: '/icons/icon-192.png', revision: '1' },
+                    { url: '/manifest.webmanifest', revision: '1' },
+                ],
+            },
+            // The web manifest is a static file: public/manifest.webmanifest.
+            manifest: false,
         }),
     ]),
     server: {

@@ -13,6 +13,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Listings\ListingPhotoController;
 use App\Http\Controllers\Listings\ListingRateController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -39,6 +40,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('notifications/read', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+
     // Photos and rates for a listing, shared by partners and the tourism office (checked by ListingPolicy).
     Route::scopeBindings()->prefix('listings/{listing}')->name('listings.')->group(function () {
         Route::post('photos', [ListingPhotoController::class, 'store'])->name('photos.store');
@@ -54,5 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('office')->name('office.')->middleware('role:tourism_officer,admin')->group(base_path('routes/office.php'));
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(base_path('routes/admin.php'));
 });
+
+Route::middleware(['auth', 'verified'])->prefix('api')->name('api.')->group(base_path('routes/api.php'));
+
+Route::view('offline', 'offline')->name('offline');
 
 require __DIR__.'/settings.php';

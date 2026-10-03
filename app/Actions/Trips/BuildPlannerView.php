@@ -5,6 +5,7 @@ namespace App\Actions\Trips;
 use App\Http\Resources\ItineraryItemResource;
 use App\Http\Resources\TripResource;
 use App\Models\Trip;
+use App\Services\BudgetService;
 use App\Services\ItineraryPlanner;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,10 @@ use Illuminate\Http\Request;
  */
 class BuildPlannerView
 {
-    public function __construct(private ItineraryPlanner $planner) {}
+    public function __construct(
+        private ItineraryPlanner $planner,
+        private BudgetService $budget,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -35,19 +39,7 @@ class BuildPlannerView
             'trip' => (new TripResource($trip))->resolve(),
             'days' => $days,
             'warnings' => $this->planner->warnings($trip),
-            'estimatedCost' => $this->estimatedCost($trip),
+            'estimatedCost' => $this->budget->estimate($trip),
         ];
-    }
-
-    /**
-     * A rough cost of the plan: entrance fees and starting prices for every person on the trip.
-     */
-    private function estimatedCost(Trip $trip): float
-    {
-        return (float) $trip->items->sum(function ($item) use ($trip) {
-            $price = $item->listing?->entrance_fee ?? $item->listing?->price_min ?? 0;
-
-            return (float) $price * $trip->pax;
-        });
     }
 }

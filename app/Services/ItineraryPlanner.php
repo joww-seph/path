@@ -75,7 +75,7 @@ class ItineraryPlanner
 
                 $item->start_time = self::toClock($start);
                 $item->end_time = self::toClock($end);
-                $item->saveQuietly();
+                $this->saveWithoutTouching($item);
 
                 $clock = $end;
                 $previous = $item->hasLocation() ? $item : $previous;
@@ -350,8 +350,19 @@ class ItineraryPlanner
     {
         foreach ($items->values() as $position => $item) {
             $item->position = $position;
-            $item->saveQuietly();
+            $this->saveWithoutTouching($item);
         }
+    }
+
+    /**
+     * Save worked-out fields without bumping updated_at, which offline sync uses to tell
+     * a traveller's own edits apart (last write wins).
+     */
+    private function saveWithoutTouching(ItineraryItem $item): void
+    {
+        $item->timestamps = false;
+        $item->saveQuietly();
+        $item->timestamps = true;
     }
 
     /**

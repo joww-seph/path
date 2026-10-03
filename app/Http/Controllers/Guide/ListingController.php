@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ListingCardResource;
 use App\Http\Resources\ListingResource;
 use App\Models\Listing;
+use App\Models\Review;
 use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -35,6 +36,18 @@ class ListingController extends Controller
             'paymentInstructions' => $listing->business?->payment_instructions,
             'myTrips' => $this->tripsFor($request->user()),
             'availability' => $listing->is_bookable ? $this->availability($listing) : null,
+            'advisories' => $listing->advisories()->activeBetween(now(), now()->addDays(30))->orderBy('starts_at')->get(['advisories.id', 'title', 'body', 'severity', 'starts_at', 'ends_at']),
+            'reviews' => $listing->reviews()->published()->with('user:id,name')->latest()->limit(20)->get()->map(fn (Review $review) => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'partner_reply' => $review->partner_reply,
+                'created_at' => $review->created_at,
+                'author' => $review->user->name,
+                'is_mine' => $review->user_id === $request->user()?->id,
+            ]),
+            'canReview' => $request->user() !== null && Gate::allows('create', [Review::class, $listing]),
+            'myReview' => $request->user() ? $listing->reviews()->where('user_id', $request->user()->id)->first(['id', 'rating', 'comment', 'status']) : null,
         ]);
     }
 

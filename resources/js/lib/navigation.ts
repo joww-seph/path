@@ -1,5 +1,11 @@
 import {
     Activity,
+    BellRing,
+    LifeBuoy,
+    MessageSquareText,
+    Phone,
+    Siren,
+    TrendingUp,
     BarChart3,
     BadgeCheck,
     Building2,
@@ -15,7 +21,7 @@ import {
     Store,
     Users,
 } from '@lucide/vue';
-import { explore } from '@/routes';
+import { explore, hotlines } from '@/routes';
 import admin from '@/routes/admin';
 import office from '@/routes/office';
 import partner from '@/routes/partner';
@@ -56,6 +62,21 @@ export function navigationFor(role: Role): NavGroup[] {
                             title: 'Explore Paoay',
                             href: explore(),
                             icon: Compass,
+                        },
+                    ],
+                },
+                {
+                    label: 'Safety',
+                    items: [
+                        {
+                            title: 'SOS / Get help',
+                            href: tourist.sos(),
+                            icon: LifeBuoy,
+                        },
+                        {
+                            title: 'Emergency hotlines',
+                            href: hotlines(),
+                            icon: Phone,
                         },
                     ],
                 },
@@ -101,6 +122,11 @@ export function navigationFor(role: Role): NavGroup[] {
                             icon: QrCode,
                         },
                         {
+                            title: 'Reviews',
+                            href: partner.reviews.index(),
+                            icon: MessageSquareText,
+                        },
+                        {
                             title: 'Reports',
                             href: partner.reports(),
                             icon: BarChart3,
@@ -135,6 +161,11 @@ export function navigationFor(role: Role): NavGroup[] {
                             href: admin.activity.index(),
                             icon: Activity,
                         },
+                        {
+                            title: 'Emergency hotlines',
+                            href: admin.hotlines.index(),
+                            icon: Phone,
+                        },
                     ],
                 },
                 ...officeNavigation(),
@@ -166,6 +197,31 @@ function officeNavigation(): NavGroup[] {
                     title: 'Events',
                     href: office.events.index(),
                     icon: CalendarDays,
+                },
+                {
+                    title: 'Reviews',
+                    href: office.reviews.index(),
+                    icon: MessageSquareText,
+                },
+                {
+                    title: 'Visitor analytics',
+                    href: office.analytics(),
+                    icon: TrendingUp,
+                },
+            ],
+        },
+        {
+            label: 'Safety',
+            items: [
+                {
+                    title: 'Advisories',
+                    href: office.advisories.index(),
+                    icon: BellRing,
+                },
+                {
+                    title: 'SOS monitor',
+                    href: office.sos.index(),
+                    icon: Siren,
                 },
             ],
         },

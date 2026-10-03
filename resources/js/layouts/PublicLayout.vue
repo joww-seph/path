@@ -5,12 +5,21 @@ import { computed, ref } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import InstallAppButton from '@/components/InstallAppButton.vue';
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
+import AdvisoryBanner from '@/components/AdvisoryBanner.vue';
 import OfflineBanner from '@/components/OfflineBanner.vue';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useTrans } from '@/composables/useTrans';
-import { dashboard, explore, home, login, map, register } from '@/routes';
+import {
+    dashboard,
+    explore,
+    home,
+    hotlines,
+    login,
+    map,
+    register,
+} from '@/routes';
 import events from '@/routes/events';
 
 const page = usePage();
@@ -24,6 +33,7 @@ const links = computed(() => [
     { title: t('Explore'), href: explore() },
     { title: t('Map'), href: map() },
     { title: t('Events'), href: events.index() },
+    { title: t('Hotlines'), href: hotlines() },
 ]);
 </script>
 
@@ -120,6 +130,7 @@ const links = computed(() => [
         </header>
 
         <OfflineBanner />
+        <AdvisoryBanner dismissible />
 
         <main class="flex-1">
             <slot />

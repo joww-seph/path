@@ -7,6 +7,7 @@ use App\Http\Controllers\Partner\CheckInController;
 use App\Http\Controllers\Partner\DashboardController;
 use App\Http\Controllers\Partner\ListingController;
 use App\Http\Controllers\Partner\ReportController;
+use App\Http\Controllers\Partner\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,3 +36,6 @@ Route::get('check-in/{token}', [CheckInController::class, 'show'])->name('check-
 Route::post('check-in', [CheckInController::class, 'store'])->middleware('throttle:30,1')->name('check-in.store');
 
 Route::get('reports', ReportController::class)->name('reports');
+
+Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
+Route::put('reviews/{review}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');

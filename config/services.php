@@ -45,6 +45,10 @@ return [
         'key' => env('OPENROUTESERVICE_API_KEY'),
     ],
 
+    'openweathermap' => [
+        'key' => env('OPENWEATHERMAP_API_KEY'),
+    ],
+
     'semaphore' => [
         'key' => env('SEMAPHORE_API_KEY'),
         'sender_name' => env('SEMAPHORE_SENDER_NAME', 'PaTH'),

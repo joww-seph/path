@@ -24,6 +24,7 @@ declare module '@inertiajs/core' {
                 available: Record<string, string>;
                 translations: Record<string, string>;
             };
+            townAdvisories?: import('@/types').Advisory[];
             sidebarOpen: boolean;
             [key: string]: unknown;
         };

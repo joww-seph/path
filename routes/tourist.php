@@ -7,9 +7,12 @@ use App\Http\Controllers\Tourist\EmergencyContactController;
 use App\Http\Controllers\Tourist\ExpenseController;
 use App\Http\Controllers\Tourist\ItineraryItemController;
 use App\Http\Controllers\Tourist\PreferencesController;
+use App\Http\Controllers\Tourist\ReviewController;
+use App\Http\Controllers\Tourist\SosController;
 use App\Http\Controllers\Tourist\TripController;
 use App\Http\Controllers\Tourist\TripMemberController;
 use App\Http\Controllers\Tourist\TripPrintController;
+use App\Http\Controllers\Tourist\TripRecapController;
 use App\Http\Controllers\Tourist\TripShareController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,3 +58,12 @@ Route::post('bookings', [BookingController::class, 'store'])->middleware('thrott
 Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
 Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 Route::get('bookings/{booking}/pdf', [BookingController::class, 'pdf'])->name('bookings.pdf');
+
+Route::get('trips/{trip}/recap', TripRecapController::class)->name('trips.recap');
+
+Route::post('listings/{listing}/reviews', [ReviewController::class, 'store'])->middleware('throttle:10,1')->name('reviews.store');
+Route::put('reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+Route::get('sos', [SosController::class, 'show'])->name('sos');
+Route::post('sos', [SosController::class, 'store'])->middleware('throttle:5,10')->name('sos.store');

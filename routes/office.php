@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\Office\AdvisoryController;
+use App\Http\Controllers\Office\AnalyticsController;
 use App\Http\Controllers\Office\BusinessVerificationController;
 use App\Http\Controllers\Office\DashboardController;
 use App\Http\Controllers\Office\EventController;
 use App\Http\Controllers\Office\HeritageStoryController;
 use App\Http\Controllers\Office\ListingController;
+use App\Http\Controllers\Office\ReviewModerationController;
+use App\Http\Controllers\Office\SosMonitorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,3 +32,14 @@ Route::scopeBindings()->group(function () {
 });
 
 Route::resource('events', EventController::class)->only(['index', 'store', 'update', 'destroy']);
+
+Route::resource('advisories', AdvisoryController::class)->only(['index', 'store', 'update', 'destroy']);
+
+Route::get('reviews', [ReviewModerationController::class, 'index'])->name('reviews.index');
+Route::put('reviews/{review}', [ReviewModerationController::class, 'update'])->name('reviews.update');
+
+Route::get('sos', [SosMonitorController::class, 'index'])->name('sos.index');
+Route::put('sos/{alert}', [SosMonitorController::class, 'update'])->name('sos.update');
+
+Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics');
+Route::get('analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');

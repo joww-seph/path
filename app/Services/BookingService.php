@@ -9,6 +9,7 @@ use App\Models\AvailabilityBlock;
 use App\Models\Booking;
 use App\Models\Listing;
 use App\Models\ListingRate;
+use App\Models\SiteVisit;
 use App\Models\User;
 use App\Notifications\BookingRequested;
 use App\Notifications\BookingStatusChanged;
@@ -157,6 +158,8 @@ class BookingService
         $this->transition($booking, BookingStatus::Completed, $partner, function (Booking $booking) {
             $booking->checked_in_at = now();
         });
+
+        SiteVisit::record($booking->listing_id, $booking->user_id, now()->toDateString(), 'booking');
     }
 
     public function expire(Booking $booking): void

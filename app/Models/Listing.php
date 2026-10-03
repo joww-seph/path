@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
@@ -252,6 +253,35 @@ class Listing extends Model
     public function heritageStories(): HasMany
     {
         return $this->hasMany(HeritageStory::class)->orderBy('position');
+    }
+
+    /**
+     * Recount the published reviews into the cached average and count.
+     */
+    public function refreshRating(): void
+    {
+        $stats = $this->reviews()->published()->toBase()->selectRaw('count(*) as total, avg(rating) as average')->first();
+
+        $this->forceFill([
+            'reviews_count' => (int) ($stats->total ?? 0),
+            'rating_average' => round((float) ($stats->average ?? 0), 2),
+        ])->saveQuietly();
+    }
+
+    /**
+     * @return HasMany<Review, $this>
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * @return BelongsToMany<Advisory, $this>
+     */
+    public function advisories(): BelongsToMany
+    {
+        return $this->belongsToMany(Advisory::class);
     }
 
     /**

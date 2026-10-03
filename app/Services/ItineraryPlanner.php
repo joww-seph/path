@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Advisory;
 use App\Models\Category;
 use App\Models\ItineraryItem;
 use App\Models\Listing;
 use App\Models\Trip;
 use App\Models\User;
 use App\Support\Geo;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 /**
@@ -45,7 +47,10 @@ class ItineraryPlanner
         'faith' => ['attraction'],
     ];
 
-    public function __construct(private RoutingService $routing) {}
+    public function __construct(
+        private RoutingService $routing,
+        private WeatherService $weather,
+    ) {}
 
     /**
      * Work out travel legs and start and end times for every stop, day by day.
@@ -157,6 +162,10 @@ class ItineraryPlanner
         $warnings = [];
         $items = $trip->items()->with('listing')->get();
 
+        $advisories = Advisory::with('listings:id')
+            ->activeBetween($trip->start_date->startOfDay(), $trip->end_date->endOfDay())
+            ->get();
+
         foreach ($items->groupBy('day_number') as $day => $dayItems) {
             $day = (int) $day;
 
@@ -190,6 +199,32 @@ class ItineraryPlanner
                 }
             }
 
+            foreach ($advisories as $advisory) {
+                if (! $this->advisoryCovers($advisory, $date)) {
+                    continue;
+                }
+
+                $affected = $advisory->listings->pluck('id');
+
+                if ($affected->isEmpty()) {
+                    $warnings[] = $this->warning($day, null, 'advisory', __('Advisory: :title', ['title' => $advisory->title]));
+
+                    continue;
+                }
+
+                foreach ($dayItems->whereIn('listing_id', $affected) as $item) {
+                    $warnings[] = $this->warning($day, $item->id, 'advisory', __('Advisory: :title', ['title' => $advisory->title]));
+                }
+            }
+
+            if (($forecast = $this->weather->forDate($date->toDateString())) !== null && $forecast['warning'] !== null) {
+                $warnings[] = $this->warning($day, null, 'weather', match ($forecast['warning']) {
+                    'storm' => __('Strong winds are forecast on day :day. Check PAGASA advisories before going to the dunes or the lake.', ['day' => $day]),
+                    'thunderstorm' => __('Thunderstorms are forecast on day :day. Plan indoor stops and avoid open areas.', ['day' => $day]),
+                    default => __('Rain is likely on day :day (:chance%). Bring an umbrella and consider indoor stops.', ['day' => $day, 'chance' => $forecast['rain_chance']]),
+                });
+            }
+
             if ($dayItems->count() > self::MAX_STOPS_PER_DAY) {
                 $warnings[] = $this->warning($day, null, 'too_many_stops', __('Day :day has :count stops. Consider moving some to another day.', ['day' => $day, 'count' => $dayItems->count()]));
             }
@@ -207,6 +242,12 @@ class ItineraryPlanner
         }
 
         return $warnings;
+    }
+
+    private function advisoryCovers(Advisory $advisory, CarbonImmutable $date): bool
+    {
+        return $advisory->starts_at->lte($date->endOfDay())
+            && ($advisory->ends_at === null || $advisory->ends_at->gte($date->startOfDay()));
     }
 
     /**

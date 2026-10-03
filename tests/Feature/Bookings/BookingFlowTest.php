@@ -216,6 +216,9 @@ class BookingFlowTest extends TestCase
         $booking->refresh();
         $this->assertSame(BookingStatus::Completed, $booking->status);
         $this->assertNotNull($booking->checked_in_at);
+
+        // The visit counts for analytics and lets the guest review the place.
+        $this->assertDatabaseHas('site_visits', ['listing_id' => $this->listing->id, 'user_id' => $booking->user_id, 'visited_on' => '2026-10-03', 'source' => 'booking']);
     }
 
     public function test_scanning_a_voucher_opens_its_check_in_page(): void

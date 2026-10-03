@@ -14,7 +14,9 @@ import {
     Wallet,
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import AdvisoryBanner from '@/components/AdvisoryBanner.vue';
 import CategoryIcon from '@/components/guide/CategoryIcon.vue';
+import ReviewSection from '@/components/reviews/ReviewSection.vue';
 import BookingRequestCard from '@/components/bookings/BookingRequestCard.vue';
 import AddToTripCard from '@/components/trips/AddToTripCard.vue';
 import LeafletMap from '@/components/guide/LeafletMap.vue';
@@ -24,7 +26,12 @@ import { useTrans } from '@/composables/useTrans';
 import { formatDate, formatPeso } from '@/lib/format';
 import { explore } from '@/routes';
 import events from '@/routes/events';
-import type { ListingCard as ListingCardType, ListingDetail } from '@/types';
+import type {
+    Advisory,
+    ListingCard as ListingCardType,
+    ListingDetail,
+    Review,
+} from '@/types';
 
 const props = defineProps<{
     listing: ListingDetail;
@@ -41,6 +48,15 @@ const props = defineProps<{
         | { id: number; title: string; start_date: string; day_count: number }[]
         | null;
     availability: Record<string, number | null> | null;
+    advisories: Advisory[];
+    reviews: Review[];
+    canReview: boolean;
+    myReview: {
+        id: number;
+        rating: number;
+        comment: string | null;
+        status: string;
+    } | null;
 }>();
 
 const { t } = useTrans();
@@ -108,6 +124,12 @@ const paragraphs = (text: string | null) =>
         >
             {{ t('Preview: this listing is not visible to the public yet.') }}
         </div>
+
+        <AdvisoryBanner
+            v-if="advisories.length"
+            :advisories="advisories"
+            class="mb-4"
+        />
 
         <header class="mb-6">
             <p
@@ -287,6 +309,15 @@ const paragraphs = (text: string | null) =>
                     </p>
                 </section>
 
+                <ReviewSection
+                    v-if="listing.status === 'published'"
+                    :listing-slug="listing.slug"
+                    :reviews="reviews"
+                    :average="listing.rating_average"
+                    :count="listing.reviews_count"
+                    :can-review="canReview"
+                    :my-review="myReview"
+                />
                 <section v-if="props.events.length">
                     <h2 class="mb-3 text-xl font-semibold">
                         {{ t('Upcoming events here') }}

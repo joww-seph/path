@@ -338,3 +338,35 @@ export type Booking = {
     tourist?: { id: number; name: string; email: string; phone: string | null };
     trip?: { id: number; title: string } | null;
 };
+
+export type AdvisorySeverity = 'info' | 'warning' | 'danger';
+
+export type Advisory = {
+    id: number;
+    title: string;
+    body: string;
+    severity: AdvisorySeverity;
+    starts_at?: string;
+    ends_at: string | null;
+};
+
+export type Review = {
+    id: number;
+    rating: number;
+    comment: string | null;
+    partner_reply: string | null;
+    created_at: string;
+    author: string;
+    is_mine?: boolean;
+};
+
+export type DayForecast = {
+    date: string;
+    min: number;
+    max: number;
+    condition: string;
+    description: string;
+    icon: string;
+    rain_chance: number;
+    warning: string | null;
+};

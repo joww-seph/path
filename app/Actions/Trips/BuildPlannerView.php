@@ -7,6 +7,7 @@ use App\Http\Resources\TripResource;
 use App\Models\Trip;
 use App\Services\BudgetService;
 use App\Services\ItineraryPlanner;
+use App\Services\WeatherService;
 use Illuminate\Http\Request;
 
 /**
@@ -17,6 +18,7 @@ class BuildPlannerView
     public function __construct(
         private ItineraryPlanner $planner,
         private BudgetService $budget,
+        private WeatherService $weather,
     ) {}
 
     /**
@@ -39,6 +41,7 @@ class BuildPlannerView
             'trip' => (new TripResource($trip))->resolve(),
             'days' => $days,
             'warnings' => $this->planner->warnings($trip),
+            'weather' => collect($this->weather->daily())->only($days->pluck('date'))->all(),
             'estimatedCost' => $this->budget->estimate($trip),
         ];
     }

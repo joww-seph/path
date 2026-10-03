@@ -2,8 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\AdvisorySeverity;
+use App\Models\Advisory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -48,6 +51,14 @@ class HandleInertiaRequests extends Middleware
                 'available' => SetLocale::SUPPORTED,
                 'translations' => fn () => $this->translations(App::getLocale()),
             ],
+            // Named apart from page props such as a listing's own advisories. Cached as plain arrays,
+            // since the cache store refuses to unserialize objects.
+            'townAdvisories' => fn () => Cache::remember('advisories:town-wide', now()->addMinutes(5), fn () => Advisory::current()
+                ->whereDoesntHave('listings')
+                ->whereIn('severity', [AdvisorySeverity::Warning, AdvisorySeverity::Danger])
+                ->latest('starts_at')
+                ->get(['id', 'title', 'body', 'severity', 'ends_at'])
+                ->toArray()),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

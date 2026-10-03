@@ -3,6 +3,8 @@ import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     AlertTriangle,
     CloudDownload,
+    CloudRain,
+    Trophy,
     CalendarDays,
     Copy,
     FileDown,
@@ -45,6 +47,7 @@ import { explore } from '@/routes';
 import listingsRoutes from '@/routes/listings';
 import tourist from '@/routes/tourist';
 import type {
+    DayForecast,
     ItineraryDay,
     ItineraryItem,
     ListingCard,
@@ -63,6 +66,7 @@ const props = defineProps<{
     suggestions: ListingCard[];
     travelModes: Option[];
     can: { update: boolean; manage: boolean };
+    weather: Record<string, DayForecast>;
 }>();
 
 defineOptions({
@@ -342,6 +346,11 @@ function deleteTrip() {
                     >
                 </Button>
                 <Button as-child variant="outline" size="sm">
+                    <Link :href="tourist.trips.recap(trip.id)"
+                        ><Trophy /> {{ t('Recap') }}</Link
+                    >
+                </Button>
+                <Button as-child variant="outline" size="sm">
                     <a :href="tourist.trips.pdf.url(trip.id)"
                         ><FileDown /> {{ t('PDF') }}</a
                     >
@@ -458,6 +467,12 @@ function deleteTrip() {
                 >
                     ⚠ {{ warningCount(day.number) }}
                 </span>
+                <span
+                    v-if="weather[day.date]"
+                    class="text-xs tabular-nums opacity-80"
+                    >{{ weather[day.date].min }}–{{ weather[day.date].max }}°C ·
+                    {{ weather[day.date].rain_chance }}% {{ t('rain') }}</span
+                >
             </button>
         </nav>
 
@@ -496,6 +511,25 @@ function deleteTrip() {
                         </Button>
                     </div>
                 </div>
+
+                <p
+                    v-if="weather[currentDay.date]"
+                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                    <CloudRain class="size-4 shrink-0" />
+                    {{
+                        t(
+                            ':description, :min–:max°C, :chance% chance of rain',
+                            {
+                                description:
+                                    weather[currentDay.date].description,
+                                min: weather[currentDay.date].min,
+                                max: weather[currentDay.date].max,
+                                chance: weather[currentDay.date].rain_chance,
+                            },
+                        )
+                    }}
+                </p>
 
                 <p
                     v-for="warning in dayWarnings(selectedDay)"

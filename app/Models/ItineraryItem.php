@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Observers\ItineraryItemObserver;
 use Database\Factories\ItineraryItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Listing|null $listing
  */
 #[Fillable(['listing_id', 'booking_id', 'custom_title', 'custom_latitude', 'custom_longitude', 'day_number', 'position', 'duration_minutes', 'fixed_start_time', 'notes', 'is_done', 'client_uuid'])]
+#[ObservedBy(ItineraryItemObserver::class)]
 class ItineraryItem extends Model
 {
     /** @use HasFactory<ItineraryItemFactory> */

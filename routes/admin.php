@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HotlineController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,5 @@ Route::post('users/{user}/deactivate', [UserController::class, 'deactivate'])->n
 Route::post('users/{user}/reactivate', [UserController::class, 'reactivate'])->name('users.reactivate');
 
 Route::get('activity', ActivityLogController::class)->name('activity.index');
+
+Route::resource('hotlines', HotlineController::class)->only(['index', 'store', 'update', 'destroy']);

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\RoutingService;
 use App\Services\SmsService;
+use App\Services\WeatherService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(RoutingService::class, fn () => new RoutingService(
             apiKey: config('services.openrouteservice.key'),
+        ));
+
+        $this->app->singleton(WeatherService::class, fn () => new WeatherService(
+            apiKey: config('services.openweathermap.key'),
         ));
 
         $this->app->singleton(SmsService::class, fn () => new SmsService(

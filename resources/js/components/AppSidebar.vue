@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { Map } from '@lucide/vue';
+import { CircleHelp, Map } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useTrans } from '@/composables/useTrans';
 import { navigationFor } from '@/lib/navigation';
-import { dashboard, home } from '@/routes';
+import { dashboard, help, home } from '@/routes';
 
 const page = usePage();
 const { t } = useTrans();
@@ -56,6 +56,14 @@ const groups = computed(() => navigationFor(page.props.auth.user.role));
                             <Map />
                             <span>{{ t('Explore Paoay') }}</span>
                         </a>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton as-child :tooltip="t('Help')">
+                        <Link :href="help()">
+                            <CircleHelp />
+                            <span>{{ t('Help') }}</span>
+                        </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>

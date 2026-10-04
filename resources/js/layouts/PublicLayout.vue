@@ -14,6 +14,7 @@ import { useTrans } from '@/composables/useTrans';
 import {
     dashboard,
     explore,
+    help,
     home,
     hotlines,
     login,
@@ -149,6 +150,9 @@ const links = computed(() => [
                     }}
                 </p>
                 <p class="flex flex-wrap gap-x-4 gap-y-1">
+                    <Link :href="help()" class="hover:text-foreground">{{
+                        t('Help')
+                    }}</Link>
                     <Link :href="privacy()" class="hover:text-foreground">{{
                         t('Privacy notice')
                     }}</Link>

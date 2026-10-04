@@ -26,6 +26,7 @@ Route::get('places/{listing}', [ListingController::class, 'show'])->name('listin
 Route::get('map', MapController::class)->name('map');
 Route::get('hotlines', HotlineController::class)->name('hotlines');
 Route::get('privacy', PrivacyController::class)->name('privacy');
+Route::inertia('help', 'guide/Help')->name('help');
 Route::get('events', [EventController::class, 'index'])->name('events.index');
 Route::get('events/{event}', [EventController::class, 'show'])->name('events.show');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');

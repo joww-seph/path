@@ -23,6 +23,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Role $role
  * @property string|null $phone
  * @property Carbon|null $phone_verified_at
+ * @property Carbon|null $privacy_accepted_at
  * @property string|null $google_id
  * @property string $locale
  * @property Carbon|null $deactivated_at
@@ -62,6 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
+            'privacy_accepted_at' => 'datetime',
             'deactivated_at' => 'datetime',
             'password' => 'hashed',
             'role' => Role::class,

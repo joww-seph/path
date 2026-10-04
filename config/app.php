@@ -65,6 +65,18 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Data Protection Officer
+    |--------------------------------------------------------------------------
+    |
+    | The email address shown on the privacy notice for data privacy requests
+    | under the Data Privacy Act of 2012 (RA 10173).
+    |
+    */
+
+    'privacy_email' => env('PRIVACY_EMAIL'),
+
     'timezone' => env('APP_TIMEZONE', 'Asia/Manila'),
 
     /*

@@ -30,6 +30,7 @@ class PartnerRegistrationTest extends TestCase
             'business_type' => BusinessType::ActivityOperator->value,
             'permit_no' => 'BP-2026-00412',
             'address' => 'Brgy. Suba, Paoay',
+            'privacy_consent' => '1',
         ];
     }
 

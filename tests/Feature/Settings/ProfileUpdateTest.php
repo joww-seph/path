@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Settings;
 
+use App\Models\Booking;
+use App\Models\Listing;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -95,5 +98,44 @@ class ProfileUpdateTest extends TestCase
             ->assertRedirect(route('profile.edit'));
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_accounts_with_upcoming_bookings_cannot_be_deleted(): void
+    {
+        $user = User::factory()->create();
+        Booking::factory()->confirmed()->for($user, 'tourist')->create(['date' => now()->addDays(3)->toDateString()]);
+
+        $this->actingAs($user)
+            ->delete(route('profile.destroy'), ['password' => 'password'])
+            ->assertSessionHasErrors(['account' => 'You have upcoming bookings. Cancel or complete them before deleting your account.']);
+
+        $this->assertModelExists($user);
+    }
+
+    public function test_partners_with_upcoming_bookings_from_guests_cannot_delete_their_account(): void
+    {
+        $booking = Booking::factory()->create(['date' => now()->addDays(3)->toDateString()]);
+        $partner = $booking->listing->business->owner;
+
+        $this->actingAs($partner)
+            ->delete(route('profile.destroy'), ['password' => 'password'])
+            ->assertSessionHasErrors('account');
+
+        $this->assertModelExists($partner);
+    }
+
+    public function test_deleting_an_account_removes_its_reviews_from_listing_ratings(): void
+    {
+        $listing = Listing::factory()->create();
+        Review::factory()->for($listing)->create(['rating' => 5]);
+        $leaving = User::factory()->create();
+        Review::factory()->for($listing)->for($leaving)->create(['rating' => 1]);
+        $this->assertSame(3.0, (float) $listing->fresh()->rating_average);
+
+        $this->actingAs($leaving)->delete(route('profile.destroy'), ['password' => 'password'])->assertRedirect('/');
+
+        $this->assertModelMissing($leaving);
+        $this->assertSame(1, $listing->fresh()->reviews_count);
+        $this->assertSame(5.0, (float) $listing->fresh()->rating_average);
     }
 }

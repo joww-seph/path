@@ -17,6 +17,7 @@ import {
     home,
     hotlines,
     login,
+    privacy,
     map,
     register,
 } from '@/routes';
@@ -147,8 +148,11 @@ const links = computed(() => [
                         )
                     }}
                 </p>
-                <p>
-                    {{ t('Emergency? Call 911.') }}
+                <p class="flex flex-wrap gap-x-4 gap-y-1">
+                    <Link :href="privacy()" class="hover:text-foreground">{{
+                        t('Privacy notice')
+                    }}</Link>
+                    <span>{{ t('Emergency? Call 911.') }}</span>
                 </p>
             </div>
         </footer>

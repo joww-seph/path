@@ -3,6 +3,7 @@ import { Form, Head } from '@inertiajs/vue3';
 import GoogleButton from '@/components/GoogleButton.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import PrivacyConsent from '@/components/PrivacyConsent.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -103,6 +104,8 @@ defineOptions({
                 />
                 <InputError :message="errors.password_confirmation" />
             </div>
+
+            <PrivacyConsent :error="errors.privacy_consent" />
 
             <Button
                 type="submit"

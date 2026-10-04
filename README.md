@@ -23,39 +23,41 @@ Then open http://localhost:8000.
 
 Every demo account uses the password `password`.
 
-| Role | Email |
-|---|---|
-| Tourist | tourist@path.test |
-| Partner (verified business) | partner@path.test |
+| Role                            | Email                |
+| ------------------------------- | -------------------- |
+| Tourist                         | tourist@path.test    |
+| Partner (verified business)     | partner@path.test    |
 | Partner (awaiting verification) | newpartner@path.test |
-| Tourism officer | office@path.test |
-| Administrator | admin@path.test |
+| Tourism officer                 | office@path.test     |
+| Administrator                   | admin@path.test      |
 
 The seeders load Paoay's real heritage sites, stories, festivals and emergency hotlines. They also load demo businesses and itinerary templates. **Check every hotline number before a pilot.**
 
 ## Roles and areas
 
-| Area | URL prefix | Who |
-|---|---|---|
-| Destination guide, map, events, hotlines | `/`, `/explore`, `/map`, `/events`, `/hotlines` | everyone |
-| Trips, budget, bookings, SOS, reviews | `/my` | tourists |
-| Listings, bookings, check-in, availability, reports, reviews | `/partner` | partners |
-| Partner verification, listings, events, advisories, SOS monitor, reviews, analytics | `/office` | tourism officers and admins |
-| Users and roles, activity log, hotlines | `/admin` | admins |
+| Area                                                                                | URL prefix                                      | Who                         |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------- | --------------------------- |
+| Destination guide, map, events, hotlines                                            | `/`, `/explore`, `/map`, `/events`, `/hotlines` | everyone                    |
+| Trips, budget, bookings, SOS, reviews                                               | `/my`                                           | tourists                    |
+| Listings, bookings, check-in, availability, reports, reviews                        | `/partner`                                      | partners                    |
+| Partner verification, listings, events, advisories, SOS monitor, reviews, analytics | `/office`                                       | tourism officers and admins |
+| Users and roles, activity log, hotlines                                             | `/admin`                                        | admins                      |
 
 ## Optional integrations
 
 The app works without any API keys. Each integration below is turned off until you set its key in `.env`:
 
-| Variable | What it turns on | Without it |
-|---|---|---|
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | "Continue with Google" | the button is hidden |
-| `SEMAPHORE_API_KEY` | SMS for phone OTP and SOS texts (Semaphore, PH) | texts are written to the log |
-| `OPENROUTESERVICE_API_KEY` | real road travel times between stops | estimates from straight-line distance |
-| `OPENWEATHERMAP_API_KEY` | 5-day forecast and rain/storm warnings in the planner | no weather |
-| `VITE_MAP_TILE_URL` | a different tile provider | OpenStreetMap |
+| Variable                                   | What it turns on                                      | Without it                            |
+| ------------------------------------------ | ----------------------------------------------------- | ------------------------------------- |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | "Continue with Google"                                | the button is hidden                  |
+| `SEMAPHORE_API_KEY`                        | SMS for phone OTP and SOS texts (Semaphore, PH)       | texts are written to the log          |
+| `OPENROUTESERVICE_API_KEY`                 | real road travel times between stops                  | estimates from straight-line distance |
+| `OPENWEATHERMAP_API_KEY`                   | 5-day forecast and rain/storm warnings in the planner | no weather                            |
+| `VITE_MAP_TILE_URL`                        | a different tile provider                             | OpenStreetMap                         |
 
 Mail (booking updates, advisories, SOS emails to contacts) uses the normal Laravel `MAIL_*` settings.
+
+Set `PRIVACY_EMAIL` to the Data Protection Officer's address so it appears on the privacy notice (`/privacy`).
 
 ## Background work
 

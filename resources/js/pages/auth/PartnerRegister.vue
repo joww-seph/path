@@ -2,6 +2,7 @@
 import { Form, Head } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import PrivacyConsent from '@/components/PrivacyConsent.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -157,6 +158,8 @@ const { t } = useTrans();
                 />
             </div>
         </fieldset>
+
+        <PrivacyConsent :error="errors.privacy_consent" />
 
         <Button type="submit" class="w-full" :disabled="processing">
             <Spinner v-if="processing" />

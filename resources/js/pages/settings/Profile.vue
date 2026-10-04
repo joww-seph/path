@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
+import { Download } from '@lucide/vue';
 import { computed } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/DeleteUser.vue';
@@ -11,7 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NativeSelect } from '@/components/ui/native-select';
-import { edit } from '@/routes/profile';
+import { privacy } from '@/routes';
+import { edit, exportMethod as exportData } from '@/routes/profile';
 import { send } from '@/routes/verification';
 
 defineOptions({
@@ -142,6 +144,27 @@ const user = computed(() => page.props.auth.user);
     </div>
 
     <PhoneVerification v-if="user.phone" />
+
+    <div class="space-y-4">
+        <Heading
+            variant="small"
+            title="Your data"
+            description="Download a copy of everything PaTH keeps about you: profile, trips, expenses, bookings, reviews and SOS alerts."
+        />
+        <div class="flex flex-wrap items-center gap-3">
+            <Button as-child variant="outline">
+                <!-- A full page visit so the browser saves the file. -->
+                <a :href="exportData().url" data-test="export-data-button"
+                    ><Download /> Download my data</a
+                >
+            </Button>
+            <Link
+                :href="privacy()"
+                class="text-sm text-muted-foreground underline underline-offset-4"
+                >Privacy notice</Link
+            >
+        </div>
+    </div>
 
     <DeleteUser />
 </template>

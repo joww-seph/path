@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { useTrans } from '@/composables/useTrans';
+import TextLink from '@/components/TextLink.vue';
+import { privacy } from '@/routes';
 import { google } from '@/routes/auth';
 
 const { t } = useTrans();
@@ -39,5 +41,10 @@ const { t } = useTrans();
                 {{ t('Continue with Google') }}
             </a>
         </Button>
+        <p class="text-center text-xs text-muted-foreground">
+            {{ t('By continuing with Google you agree to our') }}
+            <TextLink :href="privacy()">{{ t('privacy notice') }}</TextLink
+            >.
+        </p>
     </div>
 </template>

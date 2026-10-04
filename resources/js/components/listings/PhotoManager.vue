@@ -63,6 +63,7 @@ function remove(photo: ListingPhoto) {
                 class="group relative overflow-hidden rounded-lg border"
             >
                 <img
+                    loading="lazy"
                     :src="photo.thumbnail_url"
                     :alt="photo.caption ?? ''"
                     class="aspect-[4/3] w-full object-cover"

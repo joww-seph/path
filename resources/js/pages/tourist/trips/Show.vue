@@ -690,6 +690,7 @@ function deleteTrip() {
                             class="flex items-center gap-3 rounded-lg border p-2"
                         >
                             <img
+                                loading="lazy"
                                 v-if="listing.photo"
                                 :src="listing.photo"
                                 alt=""

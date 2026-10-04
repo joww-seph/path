@@ -212,6 +212,7 @@ const paragraphs = (text: string | null) =>
                             @click="activePhoto = index"
                         >
                             <img
+                                loading="lazy"
                                 :src="photo.thumbnail_url"
                                 alt=""
                                 class="h-16 w-24 object-cover"

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\SetLocale;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\Listing;
 use App\Support\PhoneNumber;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -59,10 +60,14 @@ class ProfileController extends Controller
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
         $user = $request->user();
+        $reviewedListings = Listing::whereHas('reviews', fn ($query) => $query->where('user_id', $user->id))->get();
 
         Auth::logout();
 
         $user->delete();
+
+        // The database removes their reviews; recount the ratings of the places they reviewed.
+        $reviewedListings->each->refreshRating();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

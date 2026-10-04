@@ -81,6 +81,7 @@ const { t } = useTrans();
                     class="flex items-center gap-4 p-4 hover:bg-accent/50"
                 >
                     <img
+                        loading="lazy"
                         v-if="listing.photo"
                         :src="listing.photo"
                         alt=""

@@ -25,13 +25,18 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
-        ])->validate();
+            'privacy_consent' => $this->privacyConsentRules(),
+        ], $this->privacyConsentMessages())->validate();
 
-        return User::create([
+        $user = new User([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
             'phone' => PhoneNumber::normalize($input['phone']),
         ]);
+        $user->privacy_accepted_at = now();
+        $user->save();
+
+        return $user;
     }
 }

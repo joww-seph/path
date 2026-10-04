@@ -34,6 +34,24 @@ trait ProfileValidationRules
     }
 
     /**
+     * New accounts must agree to the privacy notice (Data Privacy Act of 2012, RA 10173).
+     *
+     * @return array<int, string>
+     */
+    protected function privacyConsentRules(): array
+    {
+        return ['accepted'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function privacyConsentMessages(): array
+    {
+        return ['privacy_consent.accepted' => __('Please agree to the privacy notice to create an account.')];
+    }
+
+    /**
      * Get the validation rules used to validate user names.
      *
      * @return array<int, ValidationRule|array<mixed>|string>

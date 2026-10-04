@@ -50,7 +50,8 @@ class PartnerRegistrationController extends Controller
             'permit_no' => ['required', 'string', 'max:100'],
             'contact_phone' => $this->phoneRules(),
             'address' => ['required', 'string', 'max:255'],
-        ]);
+            'privacy_consent' => $this->privacyConsentRules(),
+        ], $this->privacyConsentMessages());
 
         $user = DB::transaction(function () use ($validated) {
             $user = User::create([
@@ -60,6 +61,7 @@ class PartnerRegistrationController extends Controller
                 'phone' => PhoneNumber::normalize($validated['phone']),
             ]);
             $user->role = Role::Partner;
+            $user->privacy_accepted_at = now();
             $user->save();
 
             $user->businesses()->create([

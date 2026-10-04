@@ -43,6 +43,8 @@ class GoogleAuthController extends Controller
                 'email' => Str::lower((string) $googleUser->getEmail()),
             ]);
             $user->email_verified_at = now();
+            // The Google button sits under a notice that continuing means agreeing to the privacy notice.
+            $user->privacy_accepted_at = now();
         }
 
         if (! $user->isActive()) {
